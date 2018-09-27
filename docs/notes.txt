@@ -1,0 +1,36 @@
+PART 1:
+Game:
+- 9x9
+- 10 Mines
+- Minesweeper
+
+Client:
+- 1 command input (hostname port(default = 12345)) = ./client server_IP_address 12345
+- Login functionality
+- menu - Play Minesweeper, Show Leaderboard, and Exit
+
+Server:
+- 1 command input (port(default = 12345)) = ./server 12345
+- Once the server has started, it cannot be communicated with
+- Exits with SIGINT from the OS (requires a signal handler for clean exit)
+- stores client game state including 9*9 tiles. USE STRUCT
+- The server CANNOT send locations of mines. They will only become visible when flagged or the game has ended.
+
+User step:
+1. User sends coordinates to server.
+2. Server responds with 3*3 grid of
+
+Server step:
+1. receive data
+2. process move
+3. track user data
+
+Leaderboard:
+- If two or more games have the same number of seconds then the game played by the player with the highest number of games won should be displayed last
+- If two or more games were won in the same number of seconds by players with the same number of games won then display those games by the names of their players in alphabetical order
+- If no statistics are available, the leaderboard should state it and please try again later.
+
+User input:
+- Ex. A1, B6, C9. Illegal inputs should not allow for any functionality.
+
+PART 1 Does not require multiple concurrent users. thus, no requirements for multithreading.
