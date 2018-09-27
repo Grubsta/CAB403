@@ -1,5 +1,9 @@
 // Minesweeper server skeleton.
 
+// Created by:
+// Jack (n)
+// Corey (n10007164)
+
 #include "includes.h"
 
 /*
