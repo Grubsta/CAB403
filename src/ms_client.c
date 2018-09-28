@@ -6,6 +6,8 @@
 
 #include "includes.h"
 
+int flags = MINES;
+
 /*
 * Initialises the games playable field.
 */
@@ -35,9 +37,16 @@ void gameMenu() {
 }
 
 /*
-* Outputs the leaderboard interface. 
+* Outputs the leaderboard interface.
 */
 void leaderBoard() {
+
+}
+
+/*
+* Flags the location provided by the parameters.
+*/
+void flag(int x, int y) {
 
 }
 
