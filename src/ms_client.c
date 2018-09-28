@@ -14,7 +14,7 @@ void initField() {
 }
 
 /*
-* Initialises the game.
+* Initialises the game by sending the server a request.
 */
 void initGame() {
 
@@ -28,7 +28,14 @@ void gameProcess() {
 }
 
 /*
-* Outputs the leaderboard.
+* Outputs the in-game menu.
+*/
+void gameMenu() {
+
+}
+
+/*
+* Outputs the leaderboard interface. 
 */
 void leaderBoard() {
 

@@ -18,12 +18,14 @@ Server:
 
 User step:
 1. User sends coordinates to server.
-2. Server responds with 3*3 grid of
+2. Server responds
+3. Client updates interface with returned result
 
 Server step:
 1. receive data
 2. process move
 3. track user data
+4. responds with either mine, or the number or surrounding mines
 
 Leaderboard:
 - If two or more games have the same number of seconds then the game played by the player with the highest number of games won should be displayed last
