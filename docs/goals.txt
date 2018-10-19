@@ -1,0 +1,11 @@
+# Day 1
+General comms between server and client (arrays only)
+
+# Day 2
+Game functionality with comms support
+
+# Day 3
+Extraneous features (leaderboards and other)
+
+# Day 4+
+Multithreading and further functionality
