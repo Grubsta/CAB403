@@ -240,6 +240,6 @@ void shutDown() {
 * Main.
 */
 int main(int argc, char *argv[]) {
-  exit(result);
+  // exit(result);
 
 }

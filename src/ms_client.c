@@ -4,15 +4,20 @@
 // Jack (n)
 // Corey (n10007164)
 
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <errno.h> 
-#include <string.h> 
-#include <netdb.h> 
-#include <sys/types.h> 
-#include <netinet/in.h> 
-#include <sys/socket.h> 
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <netdb.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
 #include <unistd.h>
+#include "inc/includes.h"
+
+char grid[NUM_TILES_X][NUM_TILES_Y]; // Client
+char x_Axis[NUM_TILES_X] = "ABCDEFGHI"; // Client.
+
 
 #include "inc/menus.h"
 
@@ -74,9 +79,16 @@ void Login() {
 
 }
 
+
+
 /*
 * Main.
 */
 int main(int argc, char *argv[]) {
-     exit(result);
+    drawWelcomePane();
+    requestUsername();
+    requestPassword();
+    loginSuccessful();
+    drawMenu();
+    // exit(result);
 }

@@ -5,8 +5,16 @@
 char username, password;
 int active_mines;
 
+void loginSuccessful(){
+	printf("\nLogin Successful!\n");
+}
+
+void loginUnsuccessful(){
+	printf("\nThe Username or Password you entered was incorrect. Please try again\n");
+}
+
 void requestUsername(){
-	printf("Username: ");
+	printf("\nUsername: ");
 	scanf("%s", &username);
 }
 
@@ -20,8 +28,6 @@ void drawWelcomePane(){
 	printf("Welcome to the online version of Minesweeper \n");
 	printf("======================================================== \n");
 	printf("\nYou are required to log on with your registered user name and password. \n");
-  requestUsername();
-  requestPassword();
 }
 
 void drawIncorrectLogin(){
@@ -65,19 +71,6 @@ void drawGame(){
 		printf("%c | ", x_Axis[x]);
 		for (int y = 0; y < NUM_TILES_Y; y++) {
 			printf("%c ", grid[x][y]);
-		}
-		printf("\n");
-	}
-}
-
-void drawZeros(Grid tempGrid){
-	printf("\n\n\nMines Remaining: %d\n", active_mines);
-	printf("\n    1 2 3 4 5 6 7 8 9 \n");
-	printf("----------------------\n");
-	for (int x = 0; x < NUM_TILES_X; x++) {
-		printf("%c | ", x_Axis[x]);
-		for (int y = 0; y < NUM_TILES_Y; y++) {
-			printf("%d ", tempGrid.grid[x][y]);
 		}
 		printf("\n");
 	}
