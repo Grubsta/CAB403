@@ -64,6 +64,11 @@ int connect_to_client(int sockfd) {
      return newfd;
 }
 
+/*
+ * @brief process command protocol functions sent from the client
+ * @arg sockfd the socket to communicate over
+ * return -1 on fail, 0 on success
+ */
 int process_command(int sockfd) {
      int command_type;
      int y, x;
