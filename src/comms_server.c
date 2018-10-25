@@ -107,9 +107,10 @@ int authenticate(int sockfd) {
      }
 }
 
+/*
 int main(int argc, char *argv[])
 {
-	/* Get port number for server to listen on */
+	// Get port number for server to listen on
 	if (argc != 2) {
 		fprintf(stderr,"usage: client port_number\n");
 		exit(1);
@@ -170,3 +171,5 @@ int main(int argc, char *argv[])
 
      return CODE_SUCCESS;
 }
+
+*/

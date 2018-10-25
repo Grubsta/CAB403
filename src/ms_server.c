@@ -5,6 +5,7 @@
 // Corey (n10007164)
 
 #include "inc/includes.h"
+#include "comms_server.c"
 
 
 
@@ -240,6 +241,50 @@ void shutDown() {
 * Main.
 */
 int main(int argc, char *argv[]) {
-  // exit(result);
+	/* Get port number for server to listen on */
+	if (argc != 2) {
+		fprintf(stderr,"usage: client port_number\n");
+		exit(1);
+	}
 
+     int sockfd = start_listen_server(argv[1]);
+     printf("[SERVER] Listen server started on port %s.\n", argv[1]);
+
+     int newfd = connect_to_client(sockfd);
+     printf("[SERVER] Established connection to client.\n");
+
+     // Instruction loop
+     bool AUTHENTICATED = false;
+     bool GAME_END = false;
+     int instruction, instruction_old;
+
+     while (!GAME_END) {
+          // Recieve the latest instruction
+          instruction = receive_int(newfd);
+
+          // Ignore if the latest instruction is the same
+          if (instruction == instruction_old) {
+               continue;
+          }
+
+          // If the client is not authenticated, attempt to authenticate them
+          if (!AUTHENTICATED) {
+               if (authenticate(newfd) == CODE_ERROR) {
+                    printf("Error authenticating\n");
+                    continue;
+               }
+
+               AUTHENTICATED = true;
+          }
+
+          // Start accepting instructions
+          switch (instruction) {
+               case END_CONNECTION:
+                    GAME_END = true;
+          }
+     }
+
+     close(newfd);
+     close(sockfd);
+     return 0;
 }
