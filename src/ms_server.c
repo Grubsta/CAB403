@@ -292,6 +292,10 @@ int main(int argc, char *argv[]) {
           switch (instruction) {
                case END_CONNECTION:
                     GAME_END = true;
+                    break;
+               case BEGIN_COMMAND:
+                    process_command(newfd);
+                    break;
           }
      }
 

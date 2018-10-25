@@ -53,15 +53,17 @@ int cmd_place_flag(int sockfd, char coordinates[2]) {
      int i;
 
      for (i = 0; i < NUM_TILES_Y; i++) {
+          printf("y: %i\n", i);
           if (coordinates[0] == y_Axis[i]) {
-               y = y_Axis[i];
+               y = i;
                break;
           }
      }
 
      for (i = 0; i < NUM_TILES_X; i++) {
+          printf("x: %i\n", i);
           if (coordinates[1] == x_Axis[i]) {
-               x = x_Axis[i];
+               x = i;
                break;
           }
      }
@@ -73,12 +75,17 @@ int cmd_place_flag(int sockfd, char coordinates[2]) {
           return CODE_ERROR;
      }
 
+
      send_int(sockfd, COMMAND_PLACE_FLAG);
 
      if (receive_int(sockfd) != COMMAND_PLACE_FLAG) {
           printf("Error receiving command type acknowledgement from server\n");
           return CODE_ERROR;
      }
+
+     send_int(sockfd, y);
+
+     send_int(sockfd, x);
 
      if (receive_int(sockfd) != END_COMMAND) {
           printf("Error receiving end command notice from sevrer\n");

@@ -67,9 +67,6 @@ int connect_to_client(int sockfd) {
 int process_command(int sockfd) {
      int command_type;
      int y, x;
-
-     send_int(sockfd, ACKNOWLEDGE_BEGIN_COMMAND);
-
      command_type = receive_int(sockfd);
 
      send_int(sockfd, command_type);

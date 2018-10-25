@@ -82,10 +82,12 @@ void gameProcess(int sockfd) {
      while (quit == false) {
           drawGame();
           option1 = drawOptionsPane();
+
           switch (option1) {
                case REVEAL_TILE:
                     break;
                case PLACE_FLAG:
+                    printf("\nCoordinates: ");
                     scanf("%s", coordinates);
                     cmd_place_flag(sockfd, coordinates);
                     break;
