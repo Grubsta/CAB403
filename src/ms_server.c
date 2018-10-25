@@ -9,20 +9,21 @@
 
 
 // Stores the surrounding 8 blocks at a point.
-int grid[3][3] = {
-  {-1, -1}, {0, -1}, {1, -1}
-  {-1, 0},           {1, 0}
-  {-1, 1},  {0, 1},  {1, 1}
-};
 
 /*
 * Stores required variables of each tile.
 */
 typedef struct {
-  int adjacement_mines;
+  int adjacent_mines;
   bool visable;
   bool is_mine;
+  bool is_flag;
+  bool is_checked;
 } Tile;
+
+typedef struct Grid {
+  int grid[NUM_TILES_Y][NUM_TILES_X];
+} Grid; // SERVER
 
 /*
 * Stores required variables of a users game.
@@ -30,19 +31,26 @@ typedef struct {
 typedef struct GameState {
   // Add more stored variable.
   int seconds; // Total seconds of current game.
-  Tile tiles[NUM_TILES_X][NUM_TILES_Y]; // Stores the gamefield in an array
-};
+  Tile tiles[NUM_TILES_Y][NUM_TILES_X]; // Stores the gamefield in an array
+  int mines;
+} GameState;
 
 /*
 * Stores required variables of a user.
 */
 typedef struct User {
-  char name;
+  char username;
+  char password;
   GameState game; // Curent game.
   int score; // Total score.
   int seconds; // Total seconds of playtime.
   int numGames; // Total number of games played
-}
+  int gamesWon;
+} User;
+
+typedef struct userGrid {
+  char gridChar[NUM_TILES_Y][NUM_TILES_X];
+} userGrid;
 
 /*
 * Recieves user input and calls the related function.
@@ -73,43 +81,144 @@ int reader() {
 }
 
 /*
+* Updates inputted XY position to
+*/
+// SERVER
+void handleFlag(int X, int Y, GameState game) {
+  game.tiles[Y][X].is_flag = true;
+  if (game.tiles[Y][X].is_mine) {
+    game.mines--;
+  }
+}
+
+/*
 * Creates and initialises a game, and responds to the user.
 */
-void createGame(User user) {
+GameState createGame() {
   // Initialising required structures.
   GameState game;
-  user.game = game;
+  // user.game = game;
+  srand(SEED);
 
-  // Initialising bombs at a seeded location.
-  for (int i = 0; i < 10; i++) {
-    x = srand(SEED) % NUM_TILES_X - 1;
-    y = srand(SEED) % NUM_TILES_Y - 1;
+  // Set default values
+  game.seconds = 0;
+  game.mines = 10;
+  for (int x = 0; x < NUM_TILES_X; x++) {
+    for (int y = 0; y < NUM_TILES_Y; y++) {
+      game.tiles[y][x].visable = false;
+      game.tiles[y][x].is_mine = false;
+      game.tiles[y][x].is_flag = false;
+      game.tiles[y][x].is_checked = false;
+    }
+  }
+  // Initialising bombs at a random location.
+  for (int i = 0; i < MINES; i++) {
+    int x = rand() % NUM_TILES_X;
+    int y = rand() % NUM_TILES_Y;
 
     // Checking if tile is a bomb already.
-    if (!(game.tiles[x][y].is_mine)) {
-      game.tiles[x][y].is_mine = true;
+    if (!(game.tiles[y][x].is_mine)) {
+      game.tiles[y][x].is_mine = true;
+      game.tiles[y][x].adjacent_mines = 9;
     }
     else {
       i--; // Decrement 'i' to redo the loop.
     }
   }
-
-  // Sets the integer value of surround bombs for each tile.
+  // Loop over game field allocating numbers which represent the amount
   for (int y = 0; y < NUM_TILES_Y; y++) {
     for (int x = 0; x < NUM_TILES_X; x++) {
 
-      counter = 0; // Stores the surrounding mines.
-      if (!(game.tiles[x][y].is_mine)) {
+      int counter = 0; // Stores the surrounding mines.
+      if (!(game.tiles[y][x].is_mine)) {
         // Checks surrounding 8 tiles for mines, and increments counter if 1 exists.
-        for (a = 0; a < 3; a++) {
-          for (b = 0; b < 3; b++) {
-            if (game.tiles[a][b].is_mine) counter++;
+        for (int b = y - 1; b <= y + 1; b++) {
+          // Ensures value is not outside of array
+          if (b >= 0 && b < NUM_TILES_X) {
+              for (int a = x - 1; a <= x + 1; a++) {
+                if (a >= 0 && a < NUM_TILES_X) {
+
+                if (game.tiles[b][a].is_mine) {
+                  counter++;
+                }
+              }
+            }
+          }
+        }
+        game.tiles[y][x].adjacent_mines = counter; // Set adjacent mine variable to the counter
+      }
+    }
+  }
+  return game;
+}
+
+/*
+* Recursively check neighbouring values and output a 3x3 array of 1's where the value
+* on the game grid is 0.
+* Note: it is impossible for a mine to be shown in this step.
+*/
+Grid checkNeighbours(int X, int Y, GameState game) {
+  Grid tempGrid;
+  Grid outputtedGrid;
+  // Default all values to 10 - an unreachable number in minesweeper
+  for (int d = 0; d < NUM_TILES_Y; d++) {
+    for (int c = 0; c < NUM_TILES_X; c++) {
+        tempGrid.grid[d][c] = 10;
+    }
+  }
+
+  // Set tiles which have been checked to true to prevent never ending loops
+  game.tiles[X][Y].is_checked = true;
+  // Loop through neighbouring blocks cheching for a zero
+  for (int b = Y - 1; b <= Y + 1; b++) {
+    for (int a = X - 1; a <= X + 1; a++) {
+      game.tiles[b][a].is_checked = true;
+
+      // Ensure value being examined is legal
+      bool insideGrid = true;
+      if (X < 0 || X >= NUM_TILES_X || Y < 0 || Y >= NUM_TILES_Y) insideGrid = false;
+
+      // If value is 0, repeat process
+      if (game.tiles[b][a].adjacent_mines == 0 && insideGrid == true) {
+
+        // Add all neighbouring cells to the grid
+        for (int d = Y - 1; d <= Y + 1; d++) {
+          // Check the value is not outside of grid
+          if (!(d < 0 || d >= NUM_TILES_Y)) {
+            for (int c = X - 1; c <= X + 1; c++) {
+              if (!(c < 0 || c >= NUM_TILES_X)) {
+
+                // Add point to grid
+                tempGrid.grid[d][c] = game.tiles[d][c].adjacent_mines;
+
+                // Recursively call function for all 0's in surrounding grid
+                if ((!game.tiles[d][c].is_checked) &&  game.tiles[d][c].adjacent_mines == 0) {
+                  game.tiles[d][c].is_checked == true;
+                  printf("%d, %d\n", d, c);
+                  outputtedGrid = checkNeighbours(d, c, game);
+                }
+                game.tiles[d][c].is_checked == true;
+              }
+            }
+          }
+        }
+
+        // Loop through entire grid, adding values where not null
+        for (int d = 0; d < NUM_TILES_Y; d++) {
+          for (int c = 0; c < NUM_TILES_X; c++) {
+            // Check that value in grid is not null
+            if (outputtedGrid.grid[c][d] != 10) {
+              // Add value in the grid if it is not already added
+              if (game.tiles[d][c].is_checked && tempGrid.grid[d][c] == 10) {
+                tempGrid.grid[d][c] = game.tiles[d][c].adjacent_mines;
+              }
+            }
           }
         }
       }
-      game.tiles[x][y].adjacement_mines = counter; // Set adjacement mine variable to the counter
     }
   }
+  return tempGrid;
 }
 
 /*
@@ -121,7 +230,7 @@ void processMove(GameState gamestate) {
 
 /*
 * Shut downs server cleanly.
-* Handles threads, open sockets, dynamically allocated memory and open files.
+* Handles threads, open sockets, dynamically allocated memory.
 */
 void shutDown() {
 
@@ -202,12 +311,12 @@ int connect(int argc, char *argv[])
 		if (!fork()) { /* this is the child process */
 
 			/* Call method to recieve array data */
-			int *results = Receive_Array_Int_Data(new_fd,  ARRAY_SIZE);	
+			int *results = Receive_Array_Int_Data(new_fd,  ARRAY_SIZE);
 
 			/* Print out the array results sent by client */
 			for (i=0; i < ARRAY_SIZE; i++) {
 				printf("Value of index[%d] = %d\n", i, results[i]);
-			}			
+			}
 
 			free(results);
 
@@ -226,8 +335,6 @@ int connect(int argc, char *argv[])
 * Main.
 */
 int main(int argc, char *argv[]) {
-
-  reader();
 
   int result = connect();
   exit(result);
