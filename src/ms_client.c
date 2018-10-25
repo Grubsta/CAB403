@@ -39,13 +39,6 @@ void initGame() {
 }
 
 /*
-* Game processes.
-*/
-void gameProcess() {
-
-}
-
-/*
 * Outputs the in-game menu.
 */
 void gameMenu() {
@@ -81,6 +74,29 @@ void Login() {
 }
 
 
+/*
+* Game processes.
+*/
+void gameProcess() {
+  bool quit = false;
+  while (quit == false) {
+    int option1;
+    option1 = drawOptionsPane();
+    switch (option1) {
+      case 1:
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      default:
+        printf("An issue has occured processing your request. Please try again.");
+        break;
+    }
+
+  }
+}
+
 
 /*
 * Main.
@@ -91,22 +107,29 @@ int main(int argc, char *argv[]) {
           exit(1);
      }
 
+     int sockfd = connect_to_server(argv[1], argv[2]);
+
      char username[MAXDATASIZE];
      char password[MAXDATASIZE];
 
      drawWelcomePane();
-     requestUsername(username);
-     requestPassword(password);
 
-     int sockfd = connect_to_server(argv[1], argv[2]);
-     if (authenticate(sockfd, username, password) == CODE_ERROR) {
-          loginUnsuccessful();
-          disconnect_from_server(sockfd);
-          return 1;
+
+     bool AUTHENTICATED = false;
+
+     while (!AUTHENTICATED) {
+          requestUsername(username);
+          requestPassword(password);
+
+          if (authenticate(sockfd, username, password) == CODE_ERROR) {
+               loginUnsuccessful();
+               continue;
+          }
+          AUTHENTICATED = true;
      }
 
      loginSuccessful();
-     drawMenu();
+     gameProcess();
 
      disconnect_from_server(sockfd);
      return 0;

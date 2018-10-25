@@ -46,7 +46,7 @@ int drawMenu(){
     scanf("%c", &option);
     if (option == '1' || option == '2' || option == '3') {
 			int intOption = option - '0';
-      return option;
+      return intOption;
     }
     printf("\n\nThe selection was not valid. Please try again\n\n");
   }
