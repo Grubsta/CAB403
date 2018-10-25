@@ -250,9 +250,13 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-     int USER_COUNT = count_users();
-     struct AllUsers User[USER_COUNT];
-
+     // Generate 2 arrays of usernames and passwords
+     int maxSize = 20;
+     int userCount = countUsers();
+     char usernames[userCount][maxSize];
+     char passwords[userCount][maxSize];
+     int output = GenerateUsers(usernames, passwords);
+     printf("%s\n", passwords[1]);
 
      int sockfd = start_listen_server(argv[1]);
      printf("[SERVER] Listen server started on port %s.\n", argv[1]);

@@ -7,10 +7,27 @@
 
 #include "inc/networking.h"
 
-// Creates a Hash Table of 10 users
-// userTable = (struct hash *) calloc(10, sizeof(struct hash));
+int countUsers() {
+     FILE * file = fopen("Authentication.txt", "r");
+     if (file == NULL) {
+          printf("Failed to locate authentication.txt. Please check filepath.\n");
+          return CODE_ERROR;
+     }
 
-int GenerateUsers() {
+     int ch=0;
+     int lines=-1;
+     while(!feof(file)) {
+          ch = fgetc(file);
+          if(ch == '\n') {
+               lines++;
+          }
+     }
+
+     return lines;
+}
+
+int GenerateUsers(char usernames[][20], char passwords[][20]) {
+
      // Verify file exists, and open it
      FILE * file = fopen("Authentication.txt", "r");
      if (file == NULL) {
@@ -24,7 +41,6 @@ int GenerateUsers() {
      int key = 0;
      char * user = NULL;
      char * pass = NULL;
-
 
      // Loop through .txt line by line
      while ((getline(&line, &length, file)) != -1) {
@@ -51,35 +67,13 @@ int GenerateUsers() {
           if (user == NULL || pass == NULL) {
                printf("Invalid format Line %d.\n. The program will now terminate.", currentLine + 1);
                fclose(file);
-               return 0;
+               return 1;
           }
-          if (user != "Username"){
-               printf("U: %s|\n P: %s|\n", user, pass);
-          }
-
+          strcpy(usernames[currentLine], user);
+          strcpy(passwords[currentLine], pass);
      }
-     printf("%s, %d, %ld, %d\n", line, currentLine, length, key);
      fclose(file);
-     return 1;
-}
-
-int count_users() {
-     FILE * file = fopen("Authentication.txt", "r");
-     if (file == NULL) {
-          printf("Failed to locate authentication.txt. Please check filepath.\n");
-          return CODE_ERROR;
-     }
-
-     int ch=0;
-     int lines=-1;
-     while(!feof(file)) {
-          ch = fgetc(file);
-          if(ch == '\n') {
-               lines++;
-          }
-     }
-
-     return lines;
+     return 0;
 }
 
 #endif
