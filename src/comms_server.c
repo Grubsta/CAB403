@@ -96,7 +96,25 @@ int process_command(int sockfd) {
                break;
 
           case COMMAND_REVEAL_TILE:
+               y = receive_int(sockfd);
+               if (y < 0 || y > 8) {
+                    printf("Error receiving Y coordinate (out of acceptable bounds)\n");
+                    return CODE_ERROR;
+               }
+               
+               x = receive_int(sockfd);
+               if (x < 0 || x > 8) {
+                    printf("Error receiving X coordinate (out of acceptable bounds)\n");
+                    return CODE_ERROR;
+               }
+
+               /*if (process_command_place_flag(y, x) != CODE_SUCCESS) {
+                    printf("Error placing flag");
+                    return CODE_ERROR;
+               }*/
+
                break;
+
           default:
                break;
      }

@@ -85,6 +85,9 @@ void gameProcess(int sockfd) {
 
           switch (option1) {
                case REVEAL_TILE:
+                    printf("\nCoordinates: ");
+                    scanf("%s", coordinates);
+                    cmd_reveal_tile(sockfd, coordinates);
                     break;
                case PLACE_FLAG:
                     printf("\nCoordinates: ");

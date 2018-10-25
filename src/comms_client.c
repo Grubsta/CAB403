@@ -47,6 +47,54 @@ void disconnect_from_server(int sockfd) {
      close(sockfd);
 }
 
+int cmd_reveal_tile(int sockfd, char coordinates[2]) {
+     int y = -1;
+     int x = -1;
+     int i;
+
+     for (i = 0; i < NUM_TILES_Y; i++) {
+          if (coordinates[0] == y_Axis[i]) {
+               y = i;
+               break;
+          }
+     }
+
+     for (i = 0; i < NUM_TILES_X; i++) {
+          if (coordinates[1] == x_Axis[i]) {
+               x = i;
+               break;
+          }
+     }
+
+     send_int(sockfd, BEGIN_COMMAND);
+
+     if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_COMMAND) {
+          printf("Error receiving command acknowledgement from server\n");
+          return CODE_ERROR;
+     }
+
+
+     send_int(sockfd, COMMAND_REVEAL_TILE);
+
+     if (receive_int(sockfd) != COMMAND_REVEAL_TILE) {
+          printf("Error receiving command type acknowledgement from server\n");
+          return CODE_ERROR;
+     }
+
+     send_int(sockfd, y);
+
+     send_int(sockfd, x);
+
+     if (receive_int(sockfd) != END_COMMAND) {
+          printf("Error receiving end command notice from sevrer\n");
+          return CODE_ERROR;
+     }
+
+     send_int(sockfd, ACKNOWLEDGE_END_COMMAND);
+
+     return CODE_SUCCESS;
+}
+
 int cmd_place_flag(int sockfd, char coordinates[2]) {
      int y = -1;
      int x = -1;
