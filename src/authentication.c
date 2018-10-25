@@ -26,7 +26,7 @@ int countUsers() {
      return lines;
 }
 
-int GenerateUsers(char usernames[][20], char passwords[][20]) {
+int GenerateUsers(char usernames[][MAXSTRINGSIZE], char passwords[][MAXSTRINGSIZE]) {
 
      // Verify file exists, and open it
      FILE * file = fopen("Authentication.txt", "r");

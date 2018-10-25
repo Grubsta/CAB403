@@ -4,14 +4,8 @@
 // Jack (n)
 // Corey (n10007164)
 
+
 #include "inc/includes.h"
-#include "comms_server.c"
-#include "authentication.c"
-
-
-
-// Stores the surrounding 8 blocks at a point.
-
 /*
 * Stores required variables of each tile.
 */
@@ -54,6 +48,9 @@ typedef struct userGrid {
   char gridChar[NUM_TILES_Y][NUM_TILES_X];
 } userGrid;
 
+
+#include "comms_server.c"
+#include "authentication.c"
 
 
 /*
@@ -251,10 +248,9 @@ int main(int argc, char *argv[]) {
 	}
 
      // Generate 2 arrays of usernames and passwords
-     int maxSize = 20;
      int userCount = countUsers();
-     char usernames[userCount][maxSize];
-     char passwords[userCount][maxSize];
+     char usernames[userCount][MAXSTRINGSIZE];
+     char passwords[userCount][MAXSTRINGSIZE];
      int output = GenerateUsers(usernames, passwords);
      printf("%s\n", passwords[1]);
 
@@ -269,6 +265,8 @@ int main(int argc, char *argv[]) {
      bool GAME_END = false;
      int instruction, instruction_old;
 
+     User user;
+
      while (!GAME_END) {
           // Recieve the latest instruction
           instruction = receive_int(newfd);
@@ -280,7 +278,7 @@ int main(int argc, char *argv[]) {
 
           // If the client is not authenticated, attempt to authenticate them
           if (!AUTHENTICATED) {
-               if (authenticate(newfd) == CODE_ERROR) {
+               if (authenticate(newfd, usernames, passwords, userCount, user) == CODE_ERROR) {
                     printf("Error authenticating\n");
                     continue;
                }

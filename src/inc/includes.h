@@ -16,6 +16,7 @@
 #define REVEAL_TILE 4
 #define PLACE_FLAG 5
 #define QUIT_GAME 6
+#define MAXSTRINGSIZE 16
 
 char y_Axis[NUM_TILES_Y] = "ABCDEFGHI";
 char x_Axis[NUM_TILES_X] = "123456789";

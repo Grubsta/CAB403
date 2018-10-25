@@ -1,6 +1,6 @@
 #ifndef COMMS_SERVER_C
 #define COMMS_SERVER_C
-
+#include "inc/includes.h"
 #include "inc/networking.h"
 
 /*
@@ -81,7 +81,7 @@ int process_command(int sockfd) {
                     printf("Error receiving Y coordinate (out of acceptable bounds)\n");
                     return CODE_ERROR;
                }
-               
+
                x = receive_int(sockfd);
                if (x < 0 || x > 8) {
                     printf("Error receiving X coordinate (out of acceptable bounds)\n");
@@ -101,7 +101,7 @@ int process_command(int sockfd) {
                     printf("Error receiving Y coordinate (out of acceptable bounds)\n");
                     return CODE_ERROR;
                }
-               
+
                x = receive_int(sockfd);
                if (x < 0 || x > 8) {
                     printf("Error receiving X coordinate (out of acceptable bounds)\n");
@@ -129,7 +129,7 @@ int process_command(int sockfd) {
  * @arg sockfd the socket id to receive credentials via
  * @return -1 on failure, 1 on success
  */
-int authenticate(int sockfd) {
+int authenticate(int sockfd, char usernames[][MAXSTRINGSIZE], char passwords[][MAXSTRINGSIZE], int sizeArray, User user) {
      char username[MAXDATASIZE];
      char password[MAXDATASIZE];
 
@@ -160,14 +160,15 @@ int authenticate(int sockfd) {
 
      send_int(sockfd, ACKNOWLEDGE_RECEIVED_PASSWORD);
 
-     if ((strcmp(username, "jack") == 0) && (strcmp(password, "password") == 0)) {
-          send_int(sockfd, AUTHENTICATE_SUCCESS);
-          return CODE_SUCCESS;
-     }
-     else {
-          send_int(sockfd, AUTHENTICATE_FAILURE);
-          return CODE_ERROR;
-     }
+	for (int i = 2; i <= sizeArray; i++){
+		if ((strcmp(username, usernames[i]) == 0) && (strcmp(password, passwords[i]) == 0)) {
+			send_int(sockfd, AUTHENTICATE_SUCCESS);
+			return CODE_SUCCESS;
+		}
+	}
+     send_int(sockfd, AUTHENTICATE_FAILURE);
+     return CODE_ERROR;
+
 }
 
 /*
