@@ -17,8 +17,9 @@
 #include "comms_client.c"
 
 char grid[NUM_TILES_X][NUM_TILES_Y]; // Client
-char x_Axis[NUM_TILES_X] = "ABCDEFGHI"; // Client.
-
+char y_Axis[NUM_TILES_Y] = "ABCDEFGHI"; // Client.
+char username[MAXDATASIZE];
+char password[MAXDATASIZE];
 
 #include "inc/menus.h"
 
@@ -56,8 +57,10 @@ void leaderBoard() {
 * Flags the location provided by the parameters.
 */
 void flag(int x, int y) {
+  grid[y][x] = '+';
 
 }
+
 
 /*
 * Finishs the connections between user and server.
@@ -73,14 +76,11 @@ void Login() {
 
 }
 
-
-/*
-* Game processes.
-*/
 void gameProcess() {
   bool quit = false;
   while (quit == false) {
     int option1;
+    drawGame();
     option1 = drawOptionsPane();
     switch (option1) {
       case 1:
@@ -93,7 +93,29 @@ void gameProcess() {
         printf("An issue has occured processing your request. Please try again.");
         break;
     }
+  }
+}
 
+/*
+* Program processes.
+*/
+void programProcess() {
+  bool quit = false;
+  while (quit == false) {
+    int option1;
+    option1 = drawMenu();
+    switch (option1) {
+      case 1:
+        gameProcess();
+        break;
+      case 2:
+        break;
+      case 3:
+        break;
+      default:
+        printf("An issue has occured processing your request. Please try again.");
+        break;
+    }
   }
 }
 
@@ -108,9 +130,6 @@ int main(int argc, char *argv[]) {
      }
 
      int sockfd = connect_to_server(argv[1], argv[2]);
-
-     char username[MAXDATASIZE];
-     char password[MAXDATASIZE];
 
      drawWelcomePane();
 
@@ -129,7 +148,7 @@ int main(int argc, char *argv[]) {
      }
 
      loginSuccessful();
-     gameProcess();
+     programProcess();
 
      disconnect_from_server(sockfd);
      return 0;
