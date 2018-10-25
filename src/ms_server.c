@@ -6,6 +6,7 @@
 
 #include "inc/includes.h"
 #include "comms_server.c"
+#include "authentication.c"
 
 
 
@@ -52,6 +53,8 @@ typedef struct User {
 typedef struct userGrid {
   char gridChar[NUM_TILES_Y][NUM_TILES_X];
 } userGrid;
+
+
 
 /*
 * Recieves user input and calls the related function.
@@ -246,6 +249,10 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr,"usage: client port_number\n");
 		exit(1);
 	}
+
+     int USER_COUNT = count_users();
+     struct AllUsers User[USER_COUNT];
+
 
      int sockfd = start_listen_server(argv[1]);
      printf("[SERVER] Listen server started on port %s.\n", argv[1]);
