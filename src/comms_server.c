@@ -50,7 +50,6 @@ int connect_to_client(int sockfd) {
      struct sockaddr_in client_addr;
 	socklen_t sin_size;
      bool done = false;
-
      while(1) {
           // Repeatedly loop until a connection is accepted
           if ((newfd = accept(sockfd, (struct sockaddr *)&client_addr, &sin_size)) == CODE_ERROR) {
@@ -129,6 +128,61 @@ int process_command(int sockfd) {
      return CODE_SUCCESS;
 }
 
+int transmit_leaderboard(int sockfd, int sizeArray, GameState game) {
+
+	if (receive_int(sockfd) != BEGIN_TRANSMIT_LEADERBOARD) {
+		printf("Error receiving request for leaderboard\n");
+		return CODE_ERROR;
+	}
+
+	send_int(sockfd, ACKNOWLEDGE_BEGIN_TRANSMIT_LEADERBOARD);
+
+	for (int i = 2; i <= sizeArray; i++) {
+		char string[50] = "hey delilah";
+		int randNum = 5493;
+		if (receive_int(sockfd) != BEGIN_TRANSMIT_LEADERBOARD) {
+			printf("Error receiving begin transmit leaderboard\n");
+			return CODE_ERROR;
+		}
+
+		send_int(sockfd, BEGIN_TRANSMIT_LEADERBOARD_ENTRY);
+
+		// Username
+		send_char(sockfd, string);
+		if ((receive_char(sockfd, string)) != ACKNOWLEDGE_RECEIVED_USERNAME) {
+			printf("Error transmitting leaderboard username entry %d\n", i);
+			return CODE_ERROR;
+		}
+
+		send_int(sockfd, randNum);
+		if (receive_int(sockfd) != CODE_SUCCESS) {
+			printf("Error transmitiing leaderboard seconds entry %d\n", i);
+			return CODE_ERROR;
+		}
+
+		send_int(sockfd, randNum);
+		if (receive_int(sockfd) != CODE_SUCCESS) {
+			printf("Error transmitiing leaderboard games played entry %d\n", i);
+			return CODE_ERROR;
+		}
+
+		send_int(sockfd, randNum);
+		if (receive_int(sockfd) != CODE_SUCCESS) {
+			printf("Error transmitiing leaderboard games won entry %d\n", i);
+			return CODE_ERROR;
+		}
+		if (i == sizeArray) {
+			send_int(sockfd, END_TRANSMIT_LEADERBOARD);
+			if (receive_int(sockfd) != ACKNOWLEDGE_END_TRANSMIT_LEADERBOARD) {
+				printf("Error transmitting end of leaderboard %d\n", i);
+				return CODE_ERROR;
+			}
+			return CODE_SUCCESS;
+		}
+		send_int(sockfd, ACKNOWLEDGE_END_LEADERBOARD_ENTRY);
+
+	}
+}
 /*
  * @brief receive username and password from client to authenticate connection
  * @arg sockfd the socket id to receive credentials via

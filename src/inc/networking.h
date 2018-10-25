@@ -1,18 +1,18 @@
-#ifndef NETWORKING_H 
-#define NETWORKING_H 
+#ifndef NETWORKING_H
+#define NETWORKING_H
 
 #include <arpa/inet.h>
 #include <errno.h>
-#include <errno.h> 
-#include <netdb.h> 
-#include <netinet/in.h> 
+#include <errno.h>
+#include <netdb.h>
+#include <netinet/in.h>
 #include <stdbool.h>
-#include <stdio.h> 
-#include <stdlib.h> 
-#include <string.h> 
-#include <sys/socket.h> 
-#include <sys/types.h> 
-#include <sys/wait.h> 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 // Shared variables (client, server)
@@ -47,6 +47,18 @@
 #define ACKNOWLEDGE_RECEIVED_STRING 502
 #define END_TRANSMIT_STRING 503
 #define ACKNOWLEDGE_END_TRANSMIT_STRING 504
+
+// Leader Board transmission
+#define BEGIN_TRANSMIT_LEADERBOARD 600
+#define ACKNOWLEDGE_BEGIN_TRANSMIT_LEADERBOARD 601
+#define ACKOWLEDGE_RECIEVED_LEADERBOARD 602
+#define BEGIN_TRANSMIT_LEADERBOARD_ENTRY 603
+#define ACKOWLEDGE_BEGIN_LEADERBOARD_ENTRY 604
+#define END_TRANSMIT_LEADERBOARD_ENTRY 605
+#define ACKNOWLEDGE_END_LEADERBOARD_ENTRY 606
+#define END_TRANSMIT_LEADERBOARD 607
+#define ACKNOWLEDGE_END_TRANSMIT_LEADERBOARD 608
+
 
 // Connection
 #define END_CONNECTION 999

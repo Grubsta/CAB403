@@ -11,7 +11,7 @@
  * @return socket id of server connection
 */
 int connect_to_server(char * client_hostname, char * port_number) {
-	int sockfd;                        /* the socket ID to communicate through */ 
+	int sockfd;                        /* the socket ID to communicate through */
 	struct hostent *he;                /* host information */
 	struct sockaddr_in server_addr;    /* connector's address information */
 
@@ -200,6 +200,72 @@ int authenticate(int sockfd, char * username, char * password) {
      }
 
      return CODE_ERROR;
+}
+
+int generateLeaderboard(int sockfd, char usernames[][MAXSTRINGSIZE], int seconds[], int gamesWon[], int gamesLost[]) {
+     send_int(sockfd, BEGIN_TRANSMIT_LEADERBOARD);
+
+	if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_TRANSMIT_LEADERBOARD) {
+          printf("Error receiving ackowledgement for request of leaderboard\n");
+          return CODE_ERROR;
+     }
+
+	int temp;
+	int counter = 0;
+	while (true) {
+
+		// Begin transmit line
+		send_int(sockfd, ACKOWLEDGE_BEGIN_LEADERBOARD_ENTRY);
+
+		if (receive_int(sockfd) != BEGIN_TRANSMIT_LEADERBOARD_ENTRY) {
+			printf("Error receiving begin string transmit code\n");
+			return CODE_ERROR;
+		}
+
+		// username
+		if ((receive_char(sockfd, usernames[counter])) != CODE_SUCCESS) {
+			return CODE_ERROR;
+		}
+
+		send_int(sockfd, ACKNOWLEDGE_RECEIVED_USERNAME);
+
+		// seconds
+		temp = receive_int(sockfd);
+		if (temp < 0 || temp > 1000000) {
+			return CODE_ERROR;
+		}
+		seconds[counter] = temp;
+		send_int(sockfd, CODE_SUCCESS);
+
+		// games played
+		temp = receive_int(sockfd);
+		if (temp < 0 || temp > 1000000) {
+			return CODE_ERROR;
+		}
+		gamesWon[counter] = temp;
+		send_int(sockfd, CODE_SUCCESS);
+
+		// games won
+		temp = receive_int(sockfd);
+		if (temp < 0 || temp > 1000000) {
+			return CODE_ERROR;
+		}
+		gamesLost[counter] = temp;
+		send_int(sockfd, CODE_SUCCESS);
+
+		printf("\nusername %s", usernames[counter]);
+
+		if (receive_int(sockfd) == END_TRANSMIT_LEADERBOARD) {
+			send_int(sockfd, ACKNOWLEDGE_END_TRANSMIT_LEADERBOARD);
+			return CODE_SUCCESS;
+		}
+		if (receive_int(sockfd) != END_TRANSMIT_LEADERBOARD_ENTRY) {
+			printf("Error receiving end leader board entry\n");
+			return CODE_ERROR;
+		}
+		send_int(sockfd, ACKNOWLEDGE_END_LEADERBOARD_ENTRY);
+	}
+
 }
 
 

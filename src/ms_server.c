@@ -53,12 +53,6 @@ typedef struct userGrid {
 #include "authentication.c"
 
 
-/*
-* Recieves user input and calls the related function.
-*/
-void receiver() {
-
-}
 
 /*
 * Sends the leaderboard to the user.
@@ -81,6 +75,10 @@ int reader() {
 
 }
 
+int handleReveal(int X, int Y, GameState game) {
+     game.tiles[Y][X].visable = true;
+     return game.tiles[Y][X].adjacent_mines;
+}
 /*
 * Updates inputted XY position to
 */
@@ -252,11 +250,10 @@ int main(int argc, char *argv[]) {
      char usernames[userCount][MAXSTRINGSIZE];
      char passwords[userCount][MAXSTRINGSIZE];
      int output = GenerateUsers(usernames, passwords);
-     printf("%s\n", passwords[1]);
 
      int sockfd = start_listen_server(argv[1]);
      printf("[SERVER] Listen server started on port %s.\n", argv[1]);
-
+     
      int newfd = connect_to_client(sockfd);
      printf("[SERVER] Established connection to client.\n");
 
@@ -294,6 +291,8 @@ int main(int argc, char *argv[]) {
                case BEGIN_COMMAND:
                     process_command(newfd);
                     break;
+               default:
+                    process_command(newfd);
           }
      }
 

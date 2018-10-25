@@ -23,33 +23,6 @@ char password[MAXDATASIZE];
 
 int flags = MINES;
 
-/*
-* Initialises the games playable field.
-*/
-void initField() {
-
-}
-
-/*
-* Initialises the game by sending the server a request.
-*/
-void initGame() {
-
-}
-
-/*
-* Outputs the in-game menu.
-*/
-void gameMenu() {
-
-}
-
-/*
-* Outputs the leaderboard interface.
-*/
-void leaderBoard() {
-
-}
 
 /*
 * Flags the location provided by the parameters.
@@ -59,20 +32,6 @@ void flag(int x, int y) {
 
 }
 
-
-/*
-* Finishs the connections between user and server.
-*/
-void finish() {
-
-}
-
-/*
-* Login functionality.
-*/
-void Login() {
-
-}
 
 void gameProcess(int sockfd) {
      char coordinates[2] = "";
@@ -95,6 +54,7 @@ void gameProcess(int sockfd) {
                     cmd_place_flag(sockfd, coordinates);
                     break;
                case QUIT_GAME:
+                    quit == true; // $$$ add returning to program process
                     break;
                default:
                     printf("An issue has occured processing your request. Please try again.");
@@ -108,6 +68,11 @@ void gameProcess(int sockfd) {
 */
 void programProcess(int sockfd) {
      bool quit = false;
+     char usernames[MAXENTRIES][MAXSTRINGSIZE];
+     int seconds[MAXENTRIES];
+     int gamesPlayed[MAXENTRIES];
+     int gamesWon[MAXENTRIES];
+     int output;
      while (quit == false) {
           int option1;
           option1 = drawMenu();
@@ -116,6 +81,13 @@ void programProcess(int sockfd) {
                     gameProcess(sockfd);
                     break;
                case SHOW_LEADERBOARD:
+                    output = generateLeaderboard(sockfd, usernames, seconds, gamesPlayed, gamesWon);
+                    if (output == CODE_SUCCESS) {
+                         drawLeaderBoard(usernames, seconds, gamesPlayed, gamesWon);
+                    }
+                    else {
+                         printf("\nThere was an error processing your request. Please try again later.\n");
+                    }
                     break;
                case EXIT:
                     break;
