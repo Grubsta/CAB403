@@ -16,6 +16,7 @@
 #define MAXDATASIZE 100
 #define BACKLOG 10
 
+// Error codes
 #define CODE_SUCCESS 0
 #define CODE_ERROR -1
 
@@ -32,7 +33,7 @@ int receive_int(int sockfd) {
     int results;
 
     while (1) {
-          if ((recv(sockfd, &statistics, sizeof(uint16_t), 0)) == -1) {
+          if ((recv(sockfd, &statistics, sizeof(uint16_t), 0)) == CODE_ERROR) {
                printf("receive failed\n");
           }
           else {

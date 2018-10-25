@@ -6,7 +6,7 @@ int start_listen_server(char * port_number) {
 	struct sockaddr_in client_addr; /* connector's address information */
 
 
-	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == CODE_ERROR) {
           perror("socket");
           exit(1);
      }
@@ -17,13 +17,13 @@ int start_listen_server(char * port_number) {
 	server_addr.sin_addr.s_addr = INADDR_ANY; /* auto-fill with my IP */
 
 	/* bind the socket to the end point */
-     if (bind(sockfd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1) {
+     if (bind(sockfd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == CODE_ERROR) {
           perror("bind");
           exit(1);
      }
 
 	/* start listnening */
-     if (listen(sockfd, 10) == -1) {
+     if (listen(sockfd, 10) == CODE_ERROR) {
           perror("listen");
           exit(1);
      }
@@ -39,7 +39,7 @@ int connect_to_client(int sockfd) {
 
      done = false;
      while(!done) {
-          if ((newfd = accept(sockfd, (struct sockaddr *)&client_addr, &sin_size)) == -1) {
+          if ((newfd = accept(sockfd, (struct sockaddr *)&client_addr, &sin_size)) == CODE_ERROR) {
                continue;
           }
 
@@ -95,5 +95,5 @@ int main(int argc, char *argv[])
      close(newfd);
      printf("[SERVER] Closed both sockets and exiting...\n");
 
-     return 0;
+     return CODE_SUCCESS;
 }

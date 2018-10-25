@@ -7,12 +7,12 @@ int connect_to_server(char * client_hostname, char * port_number) {
 
 	if ((he = gethostbyname(client_hostname)) == NULL) {
           herror("gethostbyname");
-          exit(1);
+          exit(CODE_ERROR);
      }
 
-     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
+     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == CODE_ERROR) {
           herror("socket");
-          exit(1);
+          exit(CODE_ERROR);
      }
 
 	server_addr.sin_family = AF_INET;      /* host byte order */
@@ -20,7 +20,7 @@ int connect_to_server(char * client_hostname, char * port_number) {
 	server_addr.sin_addr = *((struct in_addr *)he->h_addr);
 	bzero(&(server_addr.sin_zero), 8);     /* zero the rest of the struct */
 
-	if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1) {
+	if (connect(sockfd, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == CODE_ERROR) {
           perror("connect");
           exit(1);
      }
@@ -44,5 +44,5 @@ int main(int argc, char*argv[]) {
      send_int(sockfd, 999);
 
      close(sockfd);
-     return 0;
+     return CODE_SUCCESS;
 }
