@@ -13,16 +13,16 @@ void loginUnsuccessful(){
 	printf("\nThe Username or Password you entered was incorrect. Please try again\n");
 }
 
-void requestUsername(){
-	printf("\nUsername: ");
-	scanf("%s", &username);
+void requestUsername(char * destination){
+    printf("\nUsername: ");
+    scanf("%s", destination);
 }
 
-void requestPassword(){
-	printf("\nPassword: ");
-	scanf("%s", &password);
-
+void requestPassword(char * destination){
+    printf("\nPassword: ");
+    scanf("%s", destination);
 }
+
 void drawWelcomePane(){
 	printf("======================================================== \n");
 	printf("Welcome to the online version of Minesweeper \n");
@@ -52,13 +52,25 @@ int drawMenu(){
   }
 }
 
-void drawOptionsPane(){
+int drawOptionsPane(){
 	printf("\n\n\nChoose an option: \n");
 	printf("<R> Reveal Tile\n");
 	printf("<P> Place Flag\n");
 	printf("<Q> Quit Game\n");
 	printf("\nOption (R,P,Q): ");
-
+	while (true){
+		printf("\n\n\nChoose an option: \n");
+		printf("<R> Reveal Tile\n");
+		printf("<P> Place Flag\n");
+		printf("<Q> Quit Game\n");
+		printf("\nOption (R,P,Q): ");
+		char option;
+    scanf("%c", &option);
+    if (option == 'R') return 1;
+		if (option == 'P') return 2;
+		if (option == 'Q') return 3;
+    printf("\n\nThe selection was not valid. Please try again\n\n");
+  }
 }
 
 void drawGame(){
