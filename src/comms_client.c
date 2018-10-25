@@ -42,11 +42,21 @@ int connect_to_server(char * client_hostname, char * port_number) {
 	return sockfd;
 }
 
+/*
+ * @brief disconnect from the specified socket
+ * @arg sockfd the socket to send the closing signal via
+ */
 void disconnect_from_server(int sockfd) {
      send_int(sockfd, END_CONNECTION);
      close(sockfd);
 }
 
+/*
+ * @brief command to send coordinate selection to server for processing
+ * @arg sockfd the socket to communicate over
+ * @arg coordinates the coordinates string (2 characters) to send to the server
+ * return -1 on fail, 0 on success
+ */
 int cmd_reveal_tile(int sockfd, char coordinates[2]) {
      int y = -1;
      int x = -1;
@@ -95,6 +105,12 @@ int cmd_reveal_tile(int sockfd, char coordinates[2]) {
      return CODE_SUCCESS;
 }
 
+/*
+ * @brief command to send coordinate selection to server for processing
+ * @arg sockfd the socket to communicate over
+ * @arg coordinates the coordinates string (2 characters) to send to the server
+ * return -1 on fail, 0 on success
+ */
 int cmd_place_flag(int sockfd, char coordinates[2]) {
      int y = -1;
      int x = -1;
