@@ -14,6 +14,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include "inc/includes.h"
+#include "comms_client.c"
 
 char grid[NUM_TILES_X][NUM_TILES_Y]; // Client
 char x_Axis[NUM_TILES_X] = "ABCDEFGHI"; // Client.
@@ -85,10 +86,27 @@ void Login() {
 * Main.
 */
 int main(int argc, char *argv[]) {
-    drawWelcomePane();
-    requestUsername();
-    requestPassword();
-    loginSuccessful();
-    drawMenu();
-    // exit(result);
+     if (argc != 3) {
+          fprintf(stderr,"usage: client_hostname port_number\n");
+          exit(1);
+     }
+
+     char username[MAXDATASIZE];
+     char password[MAXDATASIZE];
+
+     drawWelcomePane();
+     requestUsername(username);
+     requestPassword(password);
+
+     int sockfd = connect_to_server(argv[1], argv[2]);
+     if (authenticate(sockfd, username, password) == CODE_ERROR) {
+          loginUnsuccessful();
+          return 1;
+     }
+
+     loginSuccessful();
+     drawMenu();
+
+     send_int(sockfd, 999);
+     return 0;
 }

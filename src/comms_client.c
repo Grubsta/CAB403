@@ -75,11 +75,11 @@ int authenticate(int sockfd, char * username, char * password) {
      if (result == AUTHENTICATE_SUCCESS) {
           return CODE_SUCCESS;
      }
-     printf("Made it here (%d)\n", result);
 
      return CODE_ERROR;
 }
 
+/*
 int main(int argc, char*argv[]) {
 	if (argc != 3) {
 		fprintf(stderr,"usage: client_hostname port_number\n");
@@ -114,3 +114,4 @@ int main(int argc, char*argv[]) {
      close(sockfd);
      return CODE_SUCCESS;
 }
+*/
