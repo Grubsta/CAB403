@@ -1,3 +1,6 @@
+#ifndef MENUS_H 
+#define MENUS_H 
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -65,9 +68,9 @@ int drawOptionsPane(){
 		printf("<Q> Quit Game\n");
 		printf("\nOption (R,P,Q): ");
     scanf("%c", &option);
-    if (option == 'R') return REVEALTILE;
-		if (option == 'P') return PLACEFLAG;
-		if (option == 'Q') return QUITGAME;
+    if (option == 'R') return REVEAL_TILE;
+		if (option == 'P') return PLACE_FLAG;
+		if (option == 'Q') return QUIT_GAME;
     printf("\n\nThe selection was not valid. Please try again\n");
   }
 }
@@ -101,3 +104,5 @@ void drawLeaderBoard(){
 	printf("\n========================================================================\n\n");
 
 }
+
+#endif

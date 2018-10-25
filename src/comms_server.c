@@ -1,3 +1,6 @@
+#ifndef COMMS_SERVER_C
+#define COMMS_SERVER_C
+
 #include "inc/networking.h"
 
 /*
@@ -59,6 +62,48 @@ int connect_to_client(int sockfd) {
 
      // Returning the socket id to communicate over
      return newfd;
+}
+
+int process_command(int sockfd) {
+     int command_type;
+     int y, x;
+
+     send_int(sockfd, ACKNOWLEDGE_BEGIN_COMMAND);
+
+     command_type = receive_int(sockfd);
+
+     send_int(sockfd, command_type);
+
+     switch (command_type) {
+          case COMMAND_PLACE_FLAG:
+               y = receive_int(sockfd);
+               if (y < 0 || y > 8) {
+                    printf("Error receiving Y coordinate (out of acceptable bounds)\n");
+                    return CODE_ERROR;
+               }
+               
+               x = receive_int(sockfd);
+               if (x < 0 || x > 8) {
+                    printf("Error receiving X coordinate (out of acceptable bounds)\n");
+                    return CODE_ERROR;
+               }
+
+               /*if (process_command_place_flag(y, x) != CODE_SUCCESS) {
+                    printf("Error placing flag");
+                    return CODE_ERROR;
+               }*/
+
+               break;
+
+          case COMMAND_REVEAL_TILE:
+               break;
+          default:
+               break;
+     }
+
+     send_int(sockfd, END_COMMAND);
+
+     return CODE_SUCCESS;
 }
 
 /*
@@ -173,3 +218,5 @@ int main(int argc, char *argv[])
 }
 
 */
+
+#endif

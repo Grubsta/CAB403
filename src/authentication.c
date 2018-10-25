@@ -1,3 +1,6 @@
+#ifndef AUTHENTICATION_C
+#define AUTHENTICATION_C
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -79,8 +82,4 @@ int count_users() {
      return lines;
 }
 
-int main()
-{
-     printf("%d", count_users());
-     //int loaded = GenerateUsers();
-}
+#endif

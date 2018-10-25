@@ -1,3 +1,6 @@
+#ifndef NETWORKING_H 
+#define NETWORKING_H 
+
 #include <arpa/inet.h>
 #include <errno.h>
 #include <errno.h> 
@@ -21,6 +24,14 @@
 #define CODE_ERROR -1
 
 // PROTOCOL MAP
+
+// Client to server commands
+#define BEGIN_COMMAND 300
+#define ACKNOWLEDGE_BEGIN_COMMAND 301
+#define END_COMMAND 302
+#define ACKNOWLEDGE_END_COMMAND 303
+#define COMMAND_PLACE_FLAG 310
+#define COMMAND_REVEAL_TILE 311
 
 // Authentication
 #define BEGIN_AUTHENTICATE 400
@@ -139,3 +150,5 @@ int receive_char(int sockfd, char * destination) {
 
      return CODE_SUCCESS;
 }
+
+#endif

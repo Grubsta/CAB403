@@ -13,11 +13,9 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include "inc/includes.h"
 #include "comms_client.c"
 
 char grid[NUM_TILES_X][NUM_TILES_Y]; // Client
-char y_Axis[NUM_TILES_Y] = "ABCDEFGHI"; // Client.
 char username[MAXDATASIZE];
 char password[MAXDATASIZE];
 
@@ -57,7 +55,7 @@ void leaderBoard() {
 * Flags the location provided by the parameters.
 */
 void flag(int x, int y) {
-  grid[y][x] = '+';
+     grid[y][x] = '+';
 
 }
 
@@ -76,47 +74,51 @@ void Login() {
 
 }
 
-void gameProcess() {
-  bool quit = false;
-  while (quit == false) {
-    int option1;
-    drawGame();
-    option1 = drawOptionsPane();
-    switch (option1) {
-      case REVEALTILE:
-        break;
-      case PLACEFLAG:
-        break;
-      case QUITGAME:
-        break;
-      default:
-        printf("An issue has occured processing your request. Please try again.");
-        break;
-    }
-  }
+void gameProcess(int sockfd) {
+     char coordinates[2] = "";
+     int option1;
+     bool quit = false;
+
+     while (quit == false) {
+          drawGame();
+          option1 = drawOptionsPane();
+          switch (option1) {
+               case REVEAL_TILE:
+                    break;
+               case PLACE_FLAG:
+                    scanf("%s", coordinates);
+                    cmd_place_flag(sockfd, coordinates);
+                    break;
+               case QUIT_GAME:
+                    break;
+               default:
+                    printf("An issue has occured processing your request. Please try again.");
+                    break;
+          }
+     }
 }
 
 /*
 * Program processes.
 */
-void programProcess() {
-  bool quit = false;
-  while (quit == false) {
-    int option1;
-    option1 = drawMenu();
-    switch (option1) {
-      case PLAYMINESWEEPER:
-        gameProcess();
-        break;
-      case SHOWLEADERBOARD:
-        break;
-      case EXIT:
-        break;
-      default:
-        printf("An issue has occured processing your request. Please try again.");
-        break;
-    }
-  }
+void programProcess(int sockfd) {
+     bool quit = false;
+     while (quit == false) {
+          int option1;
+          option1 = drawMenu();
+          switch (option1) {
+               case PLAY_MINESWEEPER:
+                    gameProcess(sockfd);
+                    break;
+               case SHOW_LEADERBOARD:
+                    break;
+               case EXIT:
+                    break;
+               default:
+                    printf("An issue has occured processing your request. Please try again.");
+                    break;
+          }
+     }
 }
 
 
@@ -148,7 +150,7 @@ int main(int argc, char *argv[]) {
      }
 
      loginSuccessful();
-     programProcess();
+     programProcess(sockfd);
 
      disconnect_from_server(sockfd);
      return 0;

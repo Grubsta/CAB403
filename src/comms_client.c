@@ -1,4 +1,8 @@
+#ifndef COMMS_CLIENT_C
+#define COMMS_CLIENT_C
+
 #include "inc/networking.h"
+#include "inc/includes.h"
 
 /*
  * @brief connect to a currently running server
@@ -41,6 +45,49 @@ int connect_to_server(char * client_hostname, char * port_number) {
 void disconnect_from_server(int sockfd) {
      send_int(sockfd, END_CONNECTION);
      close(sockfd);
+}
+
+int cmd_place_flag(int sockfd, char coordinates[2]) {
+     int y = -1;
+     int x = -1;
+     int i;
+
+     for (i = 0; i < NUM_TILES_Y; i++) {
+          if (coordinates[0] == y_Axis[i]) {
+               y = y_Axis[i];
+               break;
+          }
+     }
+
+     for (i = 0; i < NUM_TILES_X; i++) {
+          if (coordinates[1] == x_Axis[i]) {
+               x = x_Axis[i];
+               break;
+          }
+     }
+
+     send_int(sockfd, BEGIN_COMMAND);
+
+     if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_COMMAND) {
+          printf("Error receiving command acknowledgement from server\n");
+          return CODE_ERROR;
+     }
+
+     send_int(sockfd, COMMAND_PLACE_FLAG);
+
+     if (receive_int(sockfd) != COMMAND_PLACE_FLAG) {
+          printf("Error receiving command type acknowledgement from server\n");
+          return CODE_ERROR;
+     }
+
+     if (receive_int(sockfd) != END_COMMAND) {
+          printf("Error receiving end command notice from sevrer\n");
+          return CODE_ERROR;
+     }
+
+     send_int(sockfd, ACKNOWLEDGE_END_COMMAND);
+
+     return CODE_SUCCESS;
 }
 
 /*
@@ -121,3 +168,5 @@ int main(int argc, char*argv[]) {
      return CODE_SUCCESS;
 }
 */
+
+#endif

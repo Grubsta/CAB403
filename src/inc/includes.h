@@ -1,3 +1,6 @@
+#ifndef INCLUDES_H
+#define INCLUDES_H
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -7,9 +10,14 @@
 #define NUM_TILES_X 9
 #define NUM_TILES_Y 9
 #define MINES 10
-#define PLAYMINESWEEPER 1
-#define SHOWLEADERBOARD 2
+#define PLAY_MINESWEEPER 1
+#define SHOW_LEADERBOARD 2
 #define EXIT 3
-#define REVEALTILE 4
-#define PLACEFLAG 5
-#define QUITGAME 6
+#define REVEAL_TILE 4
+#define PLACE_FLAG 5
+#define QUIT_GAME 6
+
+char y_Axis[NUM_TILES_Y] = "ABCDEFGHI";
+char x_Axis[NUM_TILES_X] = "123456789";
+
+#endif
