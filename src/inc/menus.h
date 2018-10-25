@@ -57,18 +57,17 @@ int drawMenu(){
 int drawOptionsPane(){
 	char option;
 	printf("\n\n\n");
-	while (true){
+	while (true) {
 		scanf("%c", &option);
 		printf("\nChoose an option: \n");
 		printf("<R> Reveal Tile\n");
 		printf("<P> Place Flag\n");
 		printf("<Q> Quit Game\n");
 		printf("\nOption (R,P,Q): ");
-		char option;
     scanf("%c", &option);
-    if (option == 'R') return 1;
-		if (option == 'P') return 2;
-		if (option == 'Q') return 3;
+    if (option == 'R') return REVEALTILE;
+		if (option == 'P') return PLACEFLAG;
+		if (option == 'Q') return QUITGAME;
     printf("\n\nThe selection was not valid. Please try again\n");
   }
 }

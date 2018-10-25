@@ -83,11 +83,11 @@ void gameProcess() {
     drawGame();
     option1 = drawOptionsPane();
     switch (option1) {
-      case 1:
+      case REVEALTILE:
         break;
-      case 2:
+      case PLACEFLAG:
         break;
-      case 3:
+      case QUITGAME:
         break;
       default:
         printf("An issue has occured processing your request. Please try again.");
@@ -105,12 +105,12 @@ void programProcess() {
     int option1;
     option1 = drawMenu();
     switch (option1) {
-      case 1:
+      case PLAYMINESWEEPER:
         gameProcess();
         break;
-      case 2:
+      case SHOWLEADERBOARD:
         break;
-      case 3:
+      case EXIT:
         break;
       default:
         printf("An issue has occured processing your request. Please try again.");
