@@ -35,23 +35,21 @@ void drawIncorrectLogin(){
 
 }
 
-
 int drawMenu(){
 	printf("\nPlease select an option below: \n");
-	printf("<1> Play Minesweeper \n");
-	printf("<2> Show Leaderboard \n");
-	printf("<3> Exit \n");
-  int valid = 0;
-  int option;
-  while (valid == 0){
+  while (true){
+		printf("<1> Play Minesweeper \n");
+		printf("<2> Show Leaderboard \n");
+		printf("<3> Exit \n");
+		char option;
     printf("Selection (1-3): ");
-    scanf("%d", &option);
-    if (option >= 1 && option <= 3) {
+    scanf("%c", &option);
+    if (option == '1' || option == '2' || option == '3') {
+			int intOption = option - '0';
       return option;
     }
     printf("\n\nThe selection was not valid. Please try again\n\n");
   }
-
 }
 
 void drawOptionsPane(){
