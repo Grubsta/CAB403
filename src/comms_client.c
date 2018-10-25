@@ -38,6 +38,48 @@ int connect_to_server(char * client_hostname, char * port_number) {
 	return sockfd;
 }
 
+/*
+ * @brief send username and password to server for authentication
+ * @arg sockfd the socket id to send credentials via
+ * @return -1 on failure, 0 on success
+ */
+int authenticate(int sockfd, char * username, char * password) {
+     send_int(sockfd, BEGIN_AUTHENTICATE);
+
+     if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_AUTHENTICATE) {
+          printf("Error receiving authentication acknowledgement from server\n");
+          return CODE_ERROR;
+     }
+
+     if (send_char(sockfd, username) != CODE_SUCCESS) {
+          printf("Error transmitting username to server\n");
+          return CODE_ERROR;
+     }
+
+     if (receive_int(sockfd) != ACKNOWLEDGE_RECEIVED_USERNAME) {
+          printf("Error receiving acknowledgement of username from server\n");
+          return CODE_ERROR;
+     }
+
+     if (send_char(sockfd, password) != CODE_SUCCESS) {
+          printf("Error transmitting password to server\n");
+          return CODE_ERROR;
+     }
+
+     if (receive_int(sockfd) != ACKNOWLEDGE_RECEIVED_PASSWORD) {
+          printf("Error receiving acknowledgement of password from server\n");
+          return CODE_ERROR;
+     }
+
+     int result = receive_int(sockfd);
+     if (result == AUTHENTICATE_SUCCESS) {
+          return CODE_SUCCESS;
+     }
+     printf("Made it here (%d)\n", result);
+
+     return CODE_ERROR;
+}
+
 int main(int argc, char*argv[]) {
 	if (argc != 3) {
 		fprintf(stderr,"usage: client_hostname port_number\n");
@@ -47,9 +89,25 @@ int main(int argc, char*argv[]) {
      int sockfd = connect_to_server(argv[1], argv[2]);
      printf("[CLIENT] Connection established with server.\n");
 
-     char test[512] = "This is a test string";
-     printf("Sending: %s\n", test);
-     send_char(sockfd, test);
+
+     char username[MAXDATASIZE] = "jack";
+     char password[MAXDATASIZE] = "password";
+
+     int success = authenticate(sockfd, username, password);
+
+     if (success == CODE_SUCCESS) {
+          printf("Successfully authenticated with server\n");
+     }
+     else if (success == CODE_ERROR) {
+          printf("Failed to authenticate with server\n");
+     }
+     else {
+          printf("SOmething has gone terribly wrong\n");
+     }
+
+     //char test[MAXDATASIZE] = "This is a test string";
+     //printf("Sending: %s\n", test);
+     //send_char(sockfd, test);
 
      send_int(sockfd, 999);
 

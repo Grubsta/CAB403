@@ -29,8 +29,6 @@
 #define ACKNOWLEDGE_RECEIVED_PASSWORD 403
 #define AUTHENTICATE_SUCCESS 404
 #define AUTHENTICATE_FAILURE 405
-#define END_AUTHENTICATE 405
-#define ACKNOWLEDGE_END_AUTHENTICATE 406
 
 // String tranmission
 #define BEGIN_TRANSMIT_STRING 500
@@ -119,22 +117,22 @@ int send_char(int sockfd, char * value) {
 */
 int receive_char(int sockfd, char * destination) {
      // Send acknowledgement to client
-     send_int(sockfd, 501);
+     send_int(sockfd, ACKNOWLEDGE_BEGIN_TRANSMIT_STRING);
 
      // Receive the incoming char
      int numbytes = recv(sockfd, destination, MAXDATASIZE, 0);
      destination[numbytes] = '\0';
 
      // Notify the client that the char has been received
-     send_int(sockfd, 502);
+     send_int(sockfd, ACKNOWLEDGE_RECEIVED_STRING);
 
      // Wait for the client to notify the end of the tranmission
-     if (receive_int(sockfd) != 503) {
+     if (receive_int(sockfd) != END_TRANSMIT_STRING) {
           printf("Error receiving closing notice from socket\n");
           return CODE_ERROR;
      }
 
-     send_int(sockfd, 504);
+     send_int(sockfd, ACKNOWLEDGE_END_TRANSMIT_STRING);
 
      return CODE_SUCCESS;
 }

@@ -61,6 +61,52 @@ int connect_to_client(int sockfd) {
      return newfd;
 }
 
+/*
+ * @brief receive username and password from client to authenticate connection
+ * @arg sockfd the socket id to receive credentials via
+ * @return -1 on failure, 1 on success
+ */
+int authenticate(int sockfd) {
+     char username[MAXDATASIZE];
+     char password[MAXDATASIZE];
+
+     send_int(sockfd, ACKNOWLEDGE_BEGIN_AUTHENTICATE);
+
+
+     if (receive_int(sockfd) != BEGIN_TRANSMIT_STRING) {
+          printf("Error receiving begin string transmit code\n");
+          return CODE_ERROR;
+     }
+
+     if ((receive_char(sockfd, username)) != CODE_SUCCESS) {
+          printf("Error receiving username from client\n");
+          return CODE_ERROR;
+     }
+
+     send_int(sockfd, ACKNOWLEDGE_RECEIVED_USERNAME);
+
+     if (receive_int(sockfd) != BEGIN_TRANSMIT_STRING) {
+          printf("Error receiving begin string transmit code\n");
+          return CODE_ERROR;
+     }
+
+     if (receive_char(sockfd, password) != CODE_SUCCESS) {
+          printf("Error receiving password from client\n");
+          return CODE_ERROR;
+     }
+
+     send_int(sockfd, ACKNOWLEDGE_RECEIVED_PASSWORD);
+
+     if ((strcmp(username, "jack") == 0) && (strcmp(password, "password") == 0)) {
+          send_int(sockfd, AUTHENTICATE_SUCCESS);
+          return CODE_SUCCESS;
+     }
+     else {
+          send_int(sockfd, AUTHENTICATE_FAILURE);
+          return CODE_ERROR;
+     }
+}
+
 int main(int argc, char *argv[])
 {
 	/* Get port number for server to listen on */
@@ -78,6 +124,7 @@ int main(int argc, char *argv[])
      bool GAME_END = false;
      int instruction, instruction_old;
      char result[MAXDATASIZE];
+     int success = -1;
 
      while (!GAME_END) {
           instruction = receive_int(newfd);
@@ -85,7 +132,20 @@ int main(int argc, char *argv[])
                if (instruction == 999) {
                     GAME_END = true;
                }
-               else if (instruction == 500) {
+               else if (instruction == BEGIN_AUTHENTICATE) {
+                    success = authenticate(newfd);
+                    if (success == CODE_SUCCESS) {
+                         printf("User successfully authenticated\n");
+                    }
+                    else if (success == CODE_ERROR) {
+                         printf("User failed to authenticate\n");
+                    }
+                    else {
+                         printf("Something went horribly wrong trying to auth the user\n");
+                    }
+                    continue;
+               }
+               else if (instruction == BEGIN_TRANSMIT_STRING) {
                     receive_char(newfd, result);
                     printf("Received: %s\n", result);
 
