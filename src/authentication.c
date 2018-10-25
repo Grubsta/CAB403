@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "inc/networking.h"
+
 // Creates a Hash Table of 10 users
 // userTable = (struct hash *) calloc(10, sizeof(struct hash));
 
@@ -58,7 +60,27 @@ int GenerateUsers() {
      return 1;
 }
 
+int count_users() {
+     FILE * file = fopen("Authentication.txt", "r");
+     if (file == NULL) {
+          printf("Failed to locate authentication.txt. Please check filepath.\n");
+          return CODE_ERROR;
+     }
+
+     int ch=0;
+     int lines=-1;
+     while(!feof(file)) {
+          ch = fgetc(file);
+          if(ch == '\n') {
+               lines++;
+          }
+     }
+
+     return lines;
+}
+
 int main()
 {
-     int loaded = GenerateUsers();
+     printf("%d", count_users());
+     //int loaded = GenerateUsers();
 }
