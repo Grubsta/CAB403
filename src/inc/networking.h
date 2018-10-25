@@ -37,6 +37,9 @@
 #define END_TRANSMIT_STRING 503
 #define ACKNOWLEDGE_END_TRANSMIT_STRING 504
 
+// Connection
+#define END_CONNECTION 999
+
 
 /*
  * @brief send an int via the socket

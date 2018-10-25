@@ -101,12 +101,13 @@ int main(int argc, char *argv[]) {
      int sockfd = connect_to_server(argv[1], argv[2]);
      if (authenticate(sockfd, username, password) == CODE_ERROR) {
           loginUnsuccessful();
+          disconnect_from_server(sockfd);
           return 1;
      }
 
      loginSuccessful();
      drawMenu();
 
-     send_int(sockfd, 999);
+     disconnect_from_server(sockfd);
      return 0;
 }

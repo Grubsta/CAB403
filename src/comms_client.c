@@ -38,6 +38,11 @@ int connect_to_server(char * client_hostname, char * port_number) {
 	return sockfd;
 }
 
+void disconnect_from_server(int sockfd) {
+     send_int(sockfd, END_CONNECTION);
+     close(sockfd);
+}
+
 /*
  * @brief send username and password to server for authentication
  * @arg sockfd the socket id to send credentials via
@@ -78,6 +83,7 @@ int authenticate(int sockfd, char * username, char * password) {
 
      return CODE_ERROR;
 }
+
 
 /*
 int main(int argc, char*argv[]) {
