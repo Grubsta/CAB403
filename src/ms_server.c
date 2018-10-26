@@ -28,7 +28,8 @@ typedef struct GameState {
   // Add more stored variable.
   int seconds; // Total seconds of current game.
   Tile tiles[NUM_TILES_Y][NUM_TILES_X]; // Stores the gamefield in an array
-  int mines;
+  int flags_left;
+  int mines_left;
 } GameState;
 
 /*
@@ -38,7 +39,6 @@ typedef struct User {
   char username;
   char password;
   GameState game; // Curent game.
-  int score; // Total score.
   int seconds; // Total seconds of playtime.
   int numGames; // Total number of games played
   int gamesWon;
@@ -75,20 +75,6 @@ int reader() {
 
 }
 
-int handleReveal(int X, int Y, GameState game) {
-     game.tiles[Y][X].visable = true;
-     return game.tiles[Y][X].adjacent_mines;
-}
-/*
-* Updates inputted XY position to
-*/
-// SERVER
-void handleFlag(int X, int Y, GameState game) {
-  game.tiles[Y][X].is_flag = true;
-  if (game.tiles[Y][X].is_mine) {
-    game.mines--;
-  }
-}
 
 /*
 * Creates and initialises a game, and responds to the user.
@@ -101,7 +87,9 @@ GameState createGame() {
 
   // Set default values
   game.seconds = 0;
-  game.mines = 10;
+  game.mines_left = MINES;
+  game.flags_left = MINES;
+
   for (int x = 0; x < NUM_TILES_X; x++) {
     for (int y = 0; y < NUM_TILES_Y; y++) {
       game.tiles[y][x].visable = false;
@@ -236,7 +224,6 @@ void shutDown() {
 }
 
 void initUser(User user, GameState game) {
-     user.score = 0;
      user.seconds = 0;
      user.numGames = 0;
      user.gamesWon = 0;

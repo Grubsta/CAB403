@@ -75,8 +75,10 @@ int connect_to_client(int sockfd) {
  */
 int process_command_reveal_tile(int sockfd, User user, int y, int x) {
      int count = user.game.tiles[y][x].adjacent_mines;
-     if (count = 9) {
-
+     if (count == 9) {
+		user.numGames += 1;
+		// add time to user
+		// Game over, return back to menu
 	}
 
      send_int(sockfd, count);
@@ -110,11 +112,23 @@ int process_command(int sockfd, User user) {
                     return CODE_ERROR;
                }
 
-               /*if (process_command_place_flag(y, x) != CODE_SUCCESS) {
-                    printf("Error placing flag");
-                    return CODE_ERROR;
-               }*/
+			if (user.game.tiles[y][x].is_mine){
+				user.game.mines_left--;
 
+			}
+			user.game.flags_left -=1;
+			if (user.game.flags_left <= 0) {
+				if (user.game.mines_left <= 0) {
+					user.gamesWon--;
+					// send you won command
+
+				}
+				user.numGames++;
+				// send you lost command
+				// send entire grid
+				// go back to menu state
+			}
+			printf("flags left: %d   mines left: %d\n", user.game.flags_left, user.game.mines_left);
                break;
 
           case COMMAND_REVEAL_TILE:
@@ -247,72 +261,5 @@ int authenticate(int sockfd, char usernames[][MAXSTRINGSIZE], char passwords[][M
      return CODE_ERROR;
 
 }
-
-/*
-int main(int argc, char *argv[])
-{
-	// Get port number for server to listen on
-	if (argc != 2) {
-		fprintf(stderr,"usage: client port_number\n");
-		exit(1);
-	}
-
-     int sockfd = start_listen_server(argv[1]);
-     printf("[SERVER] Listen server started on port %s.\n", argv[1]);
-
-     int newfd = connect_to_client(sockfd);
-     printf("[SERVER] Established connection to client.\n");
-
-     bool GAME_END = false;
-     int instruction, instruction_old;
-     char result[MAXDATASIZE];
-     int success = -1;
-
-     while (!GAME_END) {
-          instruction = receive_int(newfd);
-          if (instruction != instruction_old) {
-               if (instruction == 999) {
-                    GAME_END = true;
-               }
-               else if (instruction == BEGIN_AUTHENTICATE) {
-                    success = authenticate(newfd);
-                    if (success == CODE_SUCCESS) {
-                         printf("User successfully authenticated\n");
-                    }
-                    else if (success == CODE_ERROR) {
-                         printf("User failed to authenticate\n");
-                    }
-                    else {
-                         printf("Something went horribly wrong trying to auth the user\n");
-                    }
-                    continue;
-               }
-               else if (instruction == BEGIN_TRANSMIT_STRING) {
-                    receive_char(newfd, result);
-                    printf("Received: %s\n", result);
-
-                    continue;
-
-               }
-               else {
-                    printf("instruction: %d\n", instruction);
-                    instruction_old = instruction;
-                    continue;
-               }
-          }
-          else {
-               continue;
-          }
-     }
-
-
-     close(sockfd);
-     close(newfd);
-     printf("[SERVER] Closed both sockets and exiting...\n");
-
-     return CODE_SUCCESS;
-}
-
-*/
 
 #endif
