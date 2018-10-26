@@ -95,6 +95,12 @@ int cmd_reveal_tile(char coordinates[2]) {
 
      send_int(sockfd, x);
 
+     int result = receive_int(sockfd);
+     char tile[0];
+     printf("Result: %d", result);
+     tile[0] = result + '0';
+     grid[y][x] = tile;
+
      if (receive_int(sockfd) != END_COMMAND) {
           printf("Error receiving end command notice from sevrer\n");
           return CODE_ERROR;

@@ -300,7 +300,7 @@ int main(int argc, char *argv[]) {
                     GAME_END = true;
                     break;
                case BEGIN_COMMAND:
-                    process_command(newfd);
+                    process_command(newfd, user);
                     break;
                default:
                     break;

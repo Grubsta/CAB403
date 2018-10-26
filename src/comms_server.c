@@ -66,11 +66,27 @@ int connect_to_client(int sockfd) {
 }
 
 /*
+ * @brief reveal a tile at the specified coordinates and notify the client
+ * @arg sockfd the socket to communicate over
+ * @arg user the current user
+ * @arg y the y coordinate to check
+ * @arg x the x coordinate to check
+ * @return -1 on fail, 0 on success
+ */
+int process_command_reveal_tile(int sockfd, User user, int y, int x) {
+     /*int count = user.game.tiles[y][x].adjacent_mines;
+     printf("Tile: %d\n", count);*/
+     int count = 1;
+
+     send_int(sockfd, count);
+}
+
+/*
  * @brief process command protocol functions sent from the client
  * @arg sockfd the socket to communicate over
  * return -1 on fail, 0 on success
  */
-int process_command(int sockfd) {
+int process_command(int sockfd, User user) {
      int command_type;
      int y, x;
 
@@ -114,10 +130,10 @@ int process_command(int sockfd) {
                     return CODE_ERROR;
                }
 
-               /*if (process_command_place_flag(y, x) != CODE_SUCCESS) {
-                    printf("Error placing flag");
+               if (process_command_reveal_tile(sockfd, user, y, x) != CODE_SUCCESS) {
+                    printf("Error revealing tile");
                     return CODE_ERROR;
-               }*/
+               }
 
                break;
 
