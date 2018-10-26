@@ -4,7 +4,7 @@
 // Jack (n)
 // Corey (n10007164)
 
-
+#include "time.h"
 #include "inc/includes.h"
 /*
 * Stores required variables of each tile.

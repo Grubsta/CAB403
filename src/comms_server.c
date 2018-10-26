@@ -235,65 +235,51 @@ int process_command(int sockfd, User* user) {
      return CODE_SUCCESS;
 }
 
-int transmit_leaderboard(int sockfd, int sizeArray, GameState game) {
+/*
+ * @brief send the leaderboard to the client on when requested
+ * @arg sockfd the socket to communicate over
+ * @arg user the currently logged in user
+ * @return -1 on failure, 0 on success
+ */
+int transmit_leaderboard(int sockfd, User* user) {
+     char * username = user->username;
 
-	if (receive_int(sockfd) != BEGIN_TRANSMIT_LEADERBOARD) {
-		printf("Error receiving request for leaderboard\n");
-		return CODE_ERROR;
-	}
+     // Send a response to the client
+     send_int(sockfd, ACKNOWLEDGE_BEGIN_TRANSMIT_LEADERBOARD);
 
-	send_int(sockfd, ACKNOWLEDGE_BEGIN_TRANSMIT_LEADERBOARD);
+     send_int(sockfd, BEGIN_TRANSMIT_LEADERBOARD_ENTRY);
 
-	for (int i = 2; i <= sizeArray; i++) {
-		char string[50] = "hey delilah";
-		int randNum = 5493;
-		if (receive_int(sockfd) != BEGIN_TRANSMIT_LEADERBOARD) {
-			printf("Error receiving begin transmit leaderboard\n");
-			return CODE_ERROR;
-		}
+     if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_LEADERBOARD_ENTRY) {
+          printf("Error receiving acknowledgement of leaderboard entry\n");
+          return CODE_ERROR;
+     }
 
-		send_int(sockfd, BEGIN_TRANSMIT_LEADERBOARD_ENTRY);
+     send_char(sockfd, user->username);
+     send_int(sockfd, user->seconds);
+     send_int(sockfd, user->numGames);
+     send_int(sockfd, user->gamesWon);
 
-		// Username
-		send_char(sockfd, string);
-		if ((receive_char(sockfd, string)) != ACKNOWLEDGE_RECEIVED_USERNAME) {
-			printf("Error transmitting leaderboard username entry %d\n", i);
-			return CODE_ERROR;
-		}
+     send_int(sockfd, END_TRANSMIT_LEADERBOARD_ENTRY);
 
-		send_int(sockfd, randNum);
-		if (receive_int(sockfd) != CODE_SUCCESS) {
-			printf("Error transmitiing leaderboard seconds entry %d\n", i);
-			return CODE_ERROR;
-		}
+     if (receive_int(sockfd) != ACKNOWLEDGE_END_LEADERBOARD_ENTRY) {
+          printf("Error receiving acknowledgement of end of leaderboard entry\n");
+          return CODE_ERROR;
+     }
 
-		send_int(sockfd, randNum);
-		if (receive_int(sockfd) != CODE_SUCCESS) {
-			printf("Error transmitiing leaderboard games played entry %d\n", i);
-			return CODE_ERROR;
-		}
+     send_int(sockfd, END_TRANSMIT_LEADERBOARD);
 
-		send_int(sockfd, randNum);
-		if (receive_int(sockfd) != CODE_SUCCESS) {
-			printf("Error transmitiing leaderboard games won entry %d\n", i);
-			return CODE_ERROR;
-		}
-		if (i == sizeArray) {
-			send_int(sockfd, END_TRANSMIT_LEADERBOARD);
-			if (receive_int(sockfd) != ACKNOWLEDGE_END_TRANSMIT_LEADERBOARD) {
-				printf("Error transmitting end of leaderboard %d\n", i);
-				return CODE_ERROR;
-			}
-			return CODE_SUCCESS;
-		}
-		send_int(sockfd, ACKNOWLEDGE_END_LEADERBOARD_ENTRY);
+     if (receive_int(sockfd) != ACKNOWLEDGE_END_TRANSMIT_LEADERBOARD) {
+          printf("Error receiving acknowledgement of end of leaderboard\n");
+          return CODE_ERROR
+     }
 
-	}
+     return CODE_SUCCESS;
 }
+
 /*
  * @brief receive username and password from client to authenticate connection
  * @arg sockfd the socket id to receive credentials via
- * @return -1 on failure, 1 on success
+ * @return -1 on failure, 0 on success
  */
 int authenticate(int sockfd, char usernames[][MAXSTRINGSIZE], char passwords[][MAXSTRINGSIZE], int sizeArray, User user) {
      char username[MAXDATASIZE];

@@ -260,7 +260,7 @@ int authenticate(char * username, char * password) {
      return CODE_ERROR;
 }
 
-int generateLeaderboard(char usernames[][MAXSTRINGSIZE], int seconds[], int gamesWon[], int gamesLost[]) {
+int generateLeaderboard() {
      send_int(sockfd, BEGIN_TRANSMIT_LEADERBOARD);
 
 	if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_TRANSMIT_LEADERBOARD) {
@@ -268,62 +268,32 @@ int generateLeaderboard(char usernames[][MAXSTRINGSIZE], int seconds[], int game
           return CODE_ERROR;
      }
 
-	int temp;
-	int counter = 0;
-	while (true) {
+     if (receive_int(sockfd) != BEGIN_TRANSMIT_LEADERBOARD_ENTRY) {
+          printf("Error receiving begin transmit notice for leaderboard entry\n");
+          return CODE_ERROR;
+     }
 
-		// Begin transmit line
-		send_int(sockfd, ACKOWLEDGE_BEGIN_LEADERBOARD_ENTRY);
+     char username[MAXDATASIZE];
+     receive_char(sockfd, username);
+     int seconds = receive_int(sockfd);
+     int numGames = receive_int(sockfd);
+     int gamesWon = receive_int(sockfd);
 
-		if (receive_int(sockfd) != BEGIN_TRANSMIT_LEADERBOARD_ENTRY) {
-			printf("Error receiving begin string transmit code\n");
-			return CODE_ERROR;
-		}
+     if (receive_int(sockfd) != END_TRANSMIT_LEADERBOARD_ENTRY) {
+          printf("Error receiving end of leaderboard entry notice\n");
+          return CODE_ERROR;
+     }
 
-		// username
-		if ((receive_char(sockfd, usernames[counter])) != CODE_SUCCESS) {
-			return CODE_ERROR;
-		}
+     send_int(sockfd, ACKNOWLEDGE_END_LEADERBOARD_ENTRY);
 
-		send_int(sockfd, ACKNOWLEDGE_RECEIVED_USERNAME);
+     if (receive_int(sockfd) != END_TRANSMIT_LEADERBOARD) {
+          printf("Error receiving end of leaderboard notice\n");
+          return CODE_ERROR;
+     }
 
-		// seconds
-		temp = receive_int(sockfd);
-		if (temp < 0 || temp > 1000000) {
-			return CODE_ERROR;
-		}
-		seconds[counter] = temp;
-		send_int(sockfd, CODE_SUCCESS);
+     send_int(sockfd, ACKNOWLEDGE_END_TRANSMIT_LEADERBOARD);
 
-		// games played
-		temp = receive_int(sockfd);
-		if (temp < 0 || temp > 1000000) {
-			return CODE_ERROR;
-		}
-		gamesWon[counter] = temp;
-		send_int(sockfd, CODE_SUCCESS);
-
-		// games won
-		temp = receive_int(sockfd);
-		if (temp < 0 || temp > 1000000) {
-			return CODE_ERROR;
-		}
-		gamesLost[counter] = temp;
-		send_int(sockfd, CODE_SUCCESS);
-
-		printf("\nusername %s", usernames[counter]);
-
-		if (receive_int(sockfd) == END_TRANSMIT_LEADERBOARD) {
-			send_int(sockfd, ACKNOWLEDGE_END_TRANSMIT_LEADERBOARD);
-			return CODE_SUCCESS;
-		}
-		if (receive_int(sockfd) != END_TRANSMIT_LEADERBOARD_ENTRY) {
-			printf("Error receiving end leader board entry\n");
-			return CODE_ERROR;
-		}
-		send_int(sockfd, ACKNOWLEDGE_END_LEADERBOARD_ENTRY);
-	}
-
+     return CODE_SUCCESS;
 }
 
 
