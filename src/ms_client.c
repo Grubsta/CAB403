@@ -13,12 +13,14 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
-#include "comms_client.c"
+#include "inc/includes.h"
+#include "inc/networking.h"
 
 char grid[NUM_TILES_X][NUM_TILES_Y]; // Client
 char username[MAXDATASIZE];
 char password[MAXDATASIZE];
 
+#include "comms_client.c"
 #include "inc/menus.h"
 
 int flags = MINES;
