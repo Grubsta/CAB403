@@ -73,7 +73,7 @@ int connect_to_client(int sockfd) {
  * @arg x the x coordinate to check
  * @return -1 on fail, 0 on success
  */
-int process_command_reveal_tile(int sockfd, User user, int y, int x) {
+int get_tile_value(User user, int y, int x) {
      int count = user.game.tiles[y][x].adjacent_mines;
      if (count == 9) {
 		user.numGames += 1;
@@ -81,7 +81,7 @@ int process_command_reveal_tile(int sockfd, User user, int y, int x) {
 		// Game over, return back to menu
 	}
 
-     send_int(sockfd, count);
+     return count;
 }
 
 /*
@@ -116,10 +116,10 @@ int process_command(int sockfd, User user) {
 				user.game.mines_left--;
 
 			}
-			user.game.flags_left -=1;
+			user.game.flags_left--;
 			if (user.game.flags_left <= 0) {
 				if (user.game.mines_left <= 0) {
-					user.gamesWon--;
+					user.gamesWon++;
 					// send you won command
 
 				}
@@ -128,7 +128,7 @@ int process_command(int sockfd, User user) {
 				// send entire grid
 				// go back to menu state
 			}
-			printf("flags left: %d   mines left: %d\n", user.game.flags_left, user.game.mines_left);
+               send_int(sockfd, END_COMMAND);
                break;
 
           case COMMAND_REVEAL_TILE:
@@ -143,10 +143,15 @@ int process_command(int sockfd, User user) {
                     printf("Error receiving X coordinate (out of acceptable bounds)\n");
                     return CODE_ERROR;
                }
-			printf("Tile: %d	Y: %d 	X: %d", user.game.tiles[y][x].adjacent_mines, y, x);
-               if (process_command_reveal_tile(sockfd, user, y, x) != CODE_SUCCESS) {
-                    printf("Error revealing tile");
-                    return CODE_ERROR;
+
+               int tile = get_tile_value(user, y, x);
+               send_int(sockfd, tile);
+
+               if (tile == 9) {
+                    send_int(sockfd, GAME_OVER);
+               }
+               else {
+                    send_int(sockfd, END_COMMAND);
                }
 
                break;
@@ -154,8 +159,6 @@ int process_command(int sockfd, User user) {
           default:
                break;
      }
-
-     send_int(sockfd, END_COMMAND);
 
      return CODE_SUCCESS;
 }

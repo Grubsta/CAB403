@@ -79,16 +79,29 @@ int cmd_reveal_tile(int y, int x) {
 
      int result = receive_int(sockfd);
      char tile[0];
-     printf("Result: %d", result);
      tile[0] = result + '0';
      grid[y][x] = *tile;
 
-     if (receive_int(sockfd) != END_COMMAND) {
-          printf("Error receiving end command notice from server\n");
-          return CODE_ERROR;
-     }
 
-     send_int(sockfd, ACKNOWLEDGE_END_COMMAND);
+     // Check if game is over, won, or continuing
+     int status = receive_int(sockfd);
+     switch (status) {
+          case GAME_OVER:
+               send_int(sockfd, ACKNOWLEDGE_GAME_OVER);
+               // GAME OVER CODE GOES HERE
+               break;
+          case GAME_WON:
+               send_int(sockfd, ACKNOWLEDGE_GAME_WON);
+               // GAME WON CODE GOES HERE
+               break;
+          case END_COMMAND:
+               send_int(sockfd, ACKNOWLEDGE_END_COMMAND);
+               break;
+          default:
+               printf("Error receiving end command notice from server\n");
+               return CODE_ERROR;
+               break;
+     }
 
      return CODE_SUCCESS;
 }
