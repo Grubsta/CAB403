@@ -73,10 +73,10 @@ int connect_to_client(int sockfd) {
  * @arg x the x coordinate to check
  * @return -1 on fail, 0 on success
  */
-int get_tile_value(User user, int y, int x) {
-     int count = user.game.tiles[y][x].adjacent_mines;
+int get_tile_value(User *user, int y, int x) {
+     int count = user->game.tiles[y][x].adjacent_mines;
      if (count == 9) {
-		user.numGames += 1;
+		user->numGames += 1;
 		// add time to user
 		// Game over, return back to menu
 	}
@@ -89,10 +89,11 @@ int get_tile_value(User user, int y, int x) {
  * @arg sockfd the socket to communicate over
  * return -1 on fail, 0 on success
  */
-int process_command(int sockfd, User user) {
+int process_command(int sockfd, User* user) {
      int command_type;
      int y, x;
      send_int(sockfd, ACKNOWLEDGE_BEGIN_COMMAND);
+	printf("PROCESS CMD - MINES: %d     FLAGS: %d\n", user->game.mines_left, user->game.flags_left);
 
      command_type = receive_int(sockfd);
 
@@ -100,6 +101,7 @@ int process_command(int sockfd, User user) {
 
      switch (command_type) {
           case COMMAND_PLACE_FLAG:
+
                y = receive_int(sockfd);
                if (y < 0 || y > 8) {
                     printf("Error receiving Y coordinate (out of acceptable bounds)\n");
@@ -114,14 +116,14 @@ int process_command(int sockfd, User user) {
 
 
                // If flag doesn't exist in place
-               if (!user.game.tiles[y][x].is_flag) {
+               if (!user->game.tiles[y][x].is_flag) {
                     // If mine is where flag is to be placed
-                    if (user.game.tiles[y][x].is_mine) {
-                         user.game.mines_left--;
-                         user.game.flags_left--;
-                         user.game.tiles[y][x].is_flag = true;
+                    if (user->game.tiles[y][x].is_mine) {
+                         user->game.mines_left--;
+                         user->game.flags_left--;
+                         user->game.tiles[y][x].is_flag = true;
                          send_int(sockfd, COMMAND_PLACE_FLAG_SUCCESS);
-                         printf("Flag placed. Mines remaining: %d. Flags remaining: %d\n", user.game.mines_left, user.game.flags_left);
+                         printf("Flag placed. Mines remaining: %d. Flags remaining: %d\n", user->game.mines_left, user->game.flags_left);
                     }
                     else {
                          printf("Flag not placed.\n");
@@ -133,19 +135,20 @@ int process_command(int sockfd, User user) {
                     send_int(sockfd, COMMAND_PLACE_FLAG_FAIL);
                }
 
-			if (user.game.flags_left <= 0) {
-				if (user.game.mines_left <= 0) {
-					user.gamesWon++;
+			if (user->game.flags_left <= 0) {
+				if (user->game.mines_left <= 0) {
+					user->gamesWon++;
                          send_int(sockfd, GAME_WON);
 
 				}
-				user.numGames++;
+				user->numGames++;
                     send_int(sockfd, GAME_OVER);
 				// send entire grid
 				// go back to menu state
 			}
 
                send_int(sockfd, END_COMMAND);
+			printf("PROCESS CMD END - MINES: %d     FLAGS: %d\n", user->game.mines_left, user->game.flags_left);
                break;
 
           case COMMAND_REVEAL_TILE:
@@ -166,7 +169,7 @@ int process_command(int sockfd, User user) {
 
                if (tile == 9) {
                     send_int(sockfd, GAME_OVER);
-                    user.numGames++;
+                    user->numGames++;
                }
                else {
                     send_int(sockfd, END_COMMAND);
@@ -177,7 +180,7 @@ int process_command(int sockfd, User user) {
           default:
                break;
      }
-
+	printf("PROCESS END - MINES: %d     FLAGS: %d\n", user->game.mines_left, user->game.flags_left);
      return CODE_SUCCESS;
 }
 

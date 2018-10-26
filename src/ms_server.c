@@ -310,7 +310,7 @@ int main(int argc, char *argv[]) {
                     //transmit_leaderboard(newfd);
                     break;
                case BEGIN_COMMAND:
-                    process_command(newfd, user);
+                    process_command(newfd, &user);
                     break;
                default:
                     break;
