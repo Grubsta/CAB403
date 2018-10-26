@@ -272,9 +272,9 @@ int main(int argc, char *argv[]) {
      int instruction, instruction_old;
 
      User user;
-     GameState game;
-     initUser(user, game);
-
+     GameState game = createGame();
+     // initUser(user, game);
+     printf("\nheooe: %d	Y: %d 	X: %d", game.tiles[3][3].adjacent_mines, 3, 3);
      while (!GAME_END) {
           // Recieve the latest instruction
           instruction = receive_int(newfd);
@@ -300,7 +300,8 @@ int main(int argc, char *argv[]) {
                     GAME_END = true;
                     break;
                case BEGIN_COMMAND:
-                    process_command(newfd, user);
+                    printf("\nTeyyyo: %d	Y: %d 	X: %d", game.tiles[3][3].adjacent_mines, 3, 3);
+                    process_command(newfd, game);
                     break;
                default:
                     break;
