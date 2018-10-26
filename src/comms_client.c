@@ -7,6 +7,9 @@
 // The socket ID to communicate through
 int sockfd = -1;
 
+// The amount of flags the client has remaining
+int flags_remaining = FLAGS;
+
 /*
  * @brief connect to a currently running server
  * @arg client_hostname the hostname of the server to connect to
@@ -131,7 +134,21 @@ int cmd_place_flag(int y, int x) {
 
      send_int(sockfd, x);
 
-     grid[y][x] = '+';
+     int flagstate = receive_int(sockfd);
+     switch (flagstate) {
+          case COMMAND_PLACE_FLAG_SUCCESS:
+               printf("FLAG STATE IS APPARENTLY %d\n", flagstate);
+               grid[y][x] = '+';
+               printf("WHAT THE FUCK WHY");
+               flags_remaining--;
+               break;
+          case COMMAND_PLACE_FLAG_FAIL:
+               printf("Cannot place flag\n");
+               break;
+          default:
+               printf("Error receiving flag confirmation from server\n");
+               return CODE_ERROR;
+     }
 
      //Check if game is over, won, or continuing
      int status = receive_int(sockfd);

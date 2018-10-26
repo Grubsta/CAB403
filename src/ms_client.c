@@ -23,7 +23,6 @@ char password[MAXDATASIZE];
 #include "comms_client.c"
 #include "inc/menus.h"
 
-int flags = MINES;
 
 /*
  * @brief handle Ctrl+C (SIGINT) terminations

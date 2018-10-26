@@ -88,7 +88,7 @@ GameState createGame() {
   // Set default values
   game.seconds = 0;
   game.mines_left = MINES;
-  game.flags_left = MINES;
+  game.flags_left = FLAGS;
 
   for (int x = 0; x < NUM_TILES_X; x++) {
     for (int y = 0; y < NUM_TILES_Y; y++) {

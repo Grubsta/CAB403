@@ -112,11 +112,27 @@ int process_command(int sockfd, User user) {
                     return CODE_ERROR;
                }
 
-			if (user.game.tiles[y][x].is_mine){
-				user.game.mines_left--;
 
-			}
-			user.game.flags_left--;
+               // If flag doesn't exist in place
+               if (!user.game.tiles[y][x].is_flag) {
+                    // If mine is where flag is to be placed
+                    if (user.game.tiles[y][x].is_mine) {
+                         user.game.mines_left--;
+                         user.game.flags_left--;
+                         user.game.tiles[y][x].is_flag = true;
+                         send_int(sockfd, COMMAND_PLACE_FLAG_SUCCESS);
+                         printf("Flag placed. Mines remaining: %d. Flags remaining: %d\n", user.game.mines_left, user.game.flags_left);
+                    }
+                    else {
+                         printf("Flag not placed.\n");
+                         send_int(sockfd, COMMAND_PLACE_FLAG_FAIL);
+                    }
+               }
+               else {
+                    printf("Flag not placed.\n");
+                    send_int(sockfd, COMMAND_PLACE_FLAG_FAIL);
+               }
+
 			if (user.game.flags_left <= 0) {
 				if (user.game.mines_left <= 0) {
 					user.gamesWon++;
