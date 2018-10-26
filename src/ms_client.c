@@ -44,11 +44,25 @@ void flag(int x, int y) {
 
 }
 
+/*
+ * @brief fill the grid with empty characters
+ */
+void reset_grid() {
+     for (int y = 0; y < NUM_TILES_Y; y++) {
+          for (int x = 0; x < NUM_TILES_X; x++) {
+               grid[y][x] = ' ';
+          }
+     }
+
+}
+
 
 void gameProcess() {
      char coordinates[2] = "";
      int option1;
      bool quit = false;
+
+     reset_grid();
 
      while (quit == false) {
           drawGame();
