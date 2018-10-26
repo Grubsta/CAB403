@@ -4,6 +4,9 @@
 #include "inc/networking.h"
 #include "inc/includes.h"
 
+// The socket ID to communicate through
+int sockfd = -1;
+
 /*
  * @brief connect to a currently running server
  * @arg client_hostname the hostname of the server to connect to
@@ -11,7 +14,6 @@
  * @return socket id of server connection
 */
 int connect_to_server(char * client_hostname, char * port_number) {
-	int sockfd;                        /* the socket ID to communicate through */
 	struct hostent *he;                /* host information */
 	struct sockaddr_in server_addr;    /* connector's address information */
 
@@ -44,20 +46,18 @@ int connect_to_server(char * client_hostname, char * port_number) {
 
 /*
  * @brief disconnect from the specified socket
- * @arg sockfd the socket to send the closing signal via
  */
-void disconnect_from_server(int sockfd) {
+void disconnect_from_server() {
      send_int(sockfd, END_CONNECTION);
      close(sockfd);
 }
 
 /*
  * @brief command to send coordinate selection to server for processing
- * @arg sockfd the socket to communicate over
  * @arg coordinates the coordinates string (2 characters) to send to the server
  * return -1 on fail, 0 on success
  */
-int cmd_reveal_tile(int sockfd, char coordinates[2]) {
+int cmd_reveal_tile(char coordinates[2]) {
      int y = -1;
      int x = -1;
      int i;
@@ -107,11 +107,10 @@ int cmd_reveal_tile(int sockfd, char coordinates[2]) {
 
 /*
  * @brief command to send coordinate selection to server for processing
- * @arg sockfd the socket to communicate over
  * @arg coordinates the coordinates string (2 characters) to send to the server
  * return -1 on fail, 0 on success
  */
-int cmd_place_flag(int sockfd, char coordinates[2]) {
+int cmd_place_flag(char coordinates[2]) {
      int y = -1;
      int x = -1;
      int i;
@@ -161,10 +160,9 @@ int cmd_place_flag(int sockfd, char coordinates[2]) {
 
 /*
  * @brief send username and password to server for authentication
- * @arg sockfd the socket id to send credentials via
  * @return -1 on failure, 0 on success
  */
-int authenticate(int sockfd, char * username, char * password) {
+int authenticate(char * username, char * password) {
      send_int(sockfd, BEGIN_AUTHENTICATE);
 
      if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_AUTHENTICATE) {
@@ -200,7 +198,7 @@ int authenticate(int sockfd, char * username, char * password) {
      return CODE_ERROR;
 }
 
-int generateLeaderboard(int sockfd, char usernames[][MAXSTRINGSIZE], int seconds[], int gamesWon[], int gamesLost[]) {
+int generateLeaderboard(char usernames[][MAXSTRINGSIZE], int seconds[], int gamesWon[], int gamesLost[]) {
      send_int(sockfd, BEGIN_TRANSMIT_LEADERBOARD);
 
 	if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_TRANSMIT_LEADERBOARD) {

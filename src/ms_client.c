@@ -23,6 +23,16 @@ char password[MAXDATASIZE];
 
 int flags = MINES;
 
+/*
+ * @brief handle Ctrl+C (SIGINT) terminations
+ * @arg sig_num the signal receive (in this case, SIGINT)
+ */
+void sigint_handler(int sig_num) 
+{ 
+    signal(SIGINT, sigint_handler);
+    disconnect_from_server();
+    exit(1);
+}
 
 /*
 * Flags the location provided by the parameters.
@@ -33,7 +43,7 @@ void flag(int x, int y) {
 }
 
 
-void gameProcess(int sockfd) {
+void gameProcess() {
      char coordinates[2] = "";
      int option1;
      bool quit = false;
@@ -46,12 +56,12 @@ void gameProcess(int sockfd) {
                case REVEAL_TILE:
                     printf("\nCoordinates: ");
                     scanf("%s", coordinates);
-                    cmd_reveal_tile(sockfd, coordinates);
+                    cmd_reveal_tile(coordinates);
                     break;
                case PLACE_FLAG:
                     printf("\nCoordinates: ");
                     scanf("%s", coordinates);
-                    cmd_place_flag(sockfd, coordinates);
+                    cmd_place_flag(coordinates);
                     break;
                case QUIT_GAME:
                     quit == true; // $$$ add returning to program process
@@ -66,7 +76,7 @@ void gameProcess(int sockfd) {
 /*
 * Program processes.
 */
-void programProcess(int sockfd) {
+void programProcess() {
      bool quit = false;
      char usernames[MAXENTRIES][MAXSTRINGSIZE];
      int seconds[MAXENTRIES];
@@ -78,10 +88,10 @@ void programProcess(int sockfd) {
           option1 = drawMenu();
           switch (option1) {
                case PLAY_MINESWEEPER:
-                    gameProcess(sockfd);
+                    gameProcess();
                     break;
                case SHOW_LEADERBOARD:
-                    output = generateLeaderboard(sockfd, usernames, seconds, gamesPlayed, gamesWon);
+                    output = generateLeaderboard(usernames, seconds, gamesPlayed, gamesWon);
                     if (output == CODE_SUCCESS) {
                          drawLeaderBoard(usernames, seconds, gamesPlayed, gamesWon);
                     }
@@ -108,7 +118,10 @@ int main(int argc, char *argv[]) {
           exit(1);
      }
 
-     int sockfd = connect_to_server(argv[1], argv[2]);
+     // Catch Ctrl+C and handle gracefully
+     signal(SIGINT, sigint_handler); 
+
+     sockfd = connect_to_server(argv[1], argv[2]);
 
      drawWelcomePane();
 
@@ -119,7 +132,7 @@ int main(int argc, char *argv[]) {
           requestUsername(username);
           requestPassword(password);
 
-          if (authenticate(sockfd, username, password) == CODE_ERROR) {
+          if (authenticate(username, password) == CODE_ERROR) {
                loginUnsuccessful();
                continue;
           }
@@ -127,8 +140,8 @@ int main(int argc, char *argv[]) {
      }
 
      loginSuccessful();
-     programProcess(sockfd);
+     programProcess();
 
-     disconnect_from_server(sockfd);
+     disconnect_from_server();
      return 0;
 }
