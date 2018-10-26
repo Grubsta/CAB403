@@ -57,10 +57,11 @@ void reset_grid() {
 }
 
 
-void gameProcess() {
+int gameProcess() {
      int option1;
      bool quit = false;
      int coordinates[2];
+     int result;
 
      reset_grid();
 
@@ -71,13 +72,37 @@ void gameProcess() {
           switch (option1) {
                case REVEAL_TILE:
                     requestCoordinates(coordinates);
-                    printf("Coordinate y: %d\nCoordinate x: %d\n", coordinates[0], coordinates[1]);
-                    cmd_reveal_tile(coordinates[0], coordinates[1]);
+                    result = cmd_reveal_tile(coordinates[0], coordinates[1]);
+                    printf("%d\n", result);
+                    switch (result) {
+                         case GAME_OVER:
+                              drawGameOver();
+                              quit = true;
+                              break;
+
+                         case GAME_WON:
+                              drawGameWon();
+                              quit = true;
+                              break;
+                    }
                     break;
+
                case PLACE_FLAG:
                     requestCoordinates(coordinates);
-                    cmd_place_flag(coordinates[0], coordinates[1]);
+                    result = cmd_place_flag(coordinates[0], coordinates[1]);
+                    switch (result) {
+                         case GAME_OVER:
+                              drawGameOver();
+                              quit = true;
+                              break;
+
+                         case GAME_WON:
+                              drawGameWon();
+                              quit = true;
+                              break;
+                    }
                     break;
+
                case QUIT_GAME:
                     quit = true; // $$$ add returning to program process
                     break;
@@ -86,6 +111,14 @@ void gameProcess() {
                     break;
           }
      }
+
+     send_int(sockfd, END_GAME);
+     if (receive_int(sockfd) != ACKNOWLEDGE_END_GAME) {
+          printf("Error receiving end game acknowledgement from server");
+          return CODE_ERROR;
+     }
+
+     return CODE_SUCCESS;
 }
 
 /*
@@ -103,6 +136,7 @@ void programProcess() {
           option1 = drawMenu();
           switch (option1) {
                case PLAY_MINESWEEPER:
+                    send_int(sockfd, BEGIN_GAME);
                     gameProcess();
                     break;
                case SHOW_LEADERBOARD:

@@ -46,7 +46,6 @@ void requestCoordinates(int destination[2]) {
           for (i = 0; i < NUM_TILES_Y; i++) {
                if (coordinates[0] == y_Axis[i]) {
                     y = i;
-                    printf("y: %d\n", y);
                     break;
                }
           }
@@ -54,7 +53,6 @@ void requestCoordinates(int destination[2]) {
           for (i = 0; i < NUM_TILES_X; i++) {
                if (coordinates[1] == x_Axis[i]) {
                     x = i;
-                    printf("x: %d\n", x);
                     break;
                }
           }
@@ -137,6 +135,10 @@ void drawGame(){
 
 void drawGameOver(){
 	printf("\n\n Oh No! Looks like you hit a mine :(\n");
+}
+
+void drawGameWon() {
+     printf("\n\nWoohoo! You win! :)\n");
 }
 
 // Draws leaderboards dependent on amount of users. No users will result in an empty table

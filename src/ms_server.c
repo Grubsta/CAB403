@@ -252,17 +252,16 @@ int main(int argc, char *argv[]) {
      printf("[SERVER] Established connection to client.\n");
 
      // Instruction loop
+     bool GAME_STARTED = false;
      bool AUTHENTICATED = false;
-     bool GAME_END = false;
+     bool PROGRAM_END = false;
      int instruction, instruction_old;
 
      User user;
-     GameState game = createGame();
-     user.game = game;
+     GameState game;
 
      // initUser(user, game);
-     printf("\nheooe: %d	Y: %d 	X: %d", user.game.tiles[3][3].adjacent_mines, 3, 3);
-     while (!GAME_END) {
+     while (!PROGRAM_END) {
           // Recieve the latest instruction
           instruction = receive_int(newfd);
 
@@ -274,20 +273,39 @@ int main(int argc, char *argv[]) {
           // If the client is not authenticated, attempt to authenticate them
           if (!AUTHENTICATED) {
                if (authenticate(newfd, usernames, passwords, userCount, user) == CODE_ERROR) {
-                    printf("Error authenticating\n");
+                    printf("[SERVER] User failed to authenticate\n");
                     continue;
                }
 
                AUTHENTICATED = true;
+               printf("[SERVER] User authenticated successfully\n");
+          }
+
+          if (!GAME_STARTED) {
+               switch(instruction) {
+                    case BEGIN_GAME:
+                         game = createGame();
+                         user.game = game;
+                         GAME_STARTED = true;
+                         printf("[SERVER] New game started by client\n");
+                         break;
+                    default:
+                         break;
+               }
           }
 
           // Start accepting instructions
           switch (instruction) {
                case END_CONNECTION:
-                    GAME_END = true;
+                    PROGRAM_END = true;
+                    printf("[SERVER] Connection to client closed\n");
+                    break;
+               case END_GAME:
+                    send_int(newfd, ACKNOWLEDGE_END_GAME);
+                    GAME_STARTED = false;
+                    printf("[SERVER] Current game ended\n");
                     break;
                case BEGIN_COMMAND:
-                    printf("\nTeyyyo: %d	Y: %d 	X: %d",  user.game.tiles[3][3].adjacent_mines, 3, 3);
                     process_command(newfd, user);
                     break;
                default:

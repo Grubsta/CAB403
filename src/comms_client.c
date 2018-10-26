@@ -88,11 +88,11 @@ int cmd_reveal_tile(int y, int x) {
      switch (status) {
           case GAME_OVER:
                send_int(sockfd, ACKNOWLEDGE_GAME_OVER);
-               // GAME OVER CODE GOES HERE
+               return GAME_OVER;
                break;
           case GAME_WON:
                send_int(sockfd, ACKNOWLEDGE_GAME_WON);
-               // GAME WON CODE GOES HERE
+               return GAME_WON;
                break;
           case END_COMMAND:
                send_int(sockfd, ACKNOWLEDGE_END_COMMAND);
