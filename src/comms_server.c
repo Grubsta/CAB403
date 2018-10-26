@@ -241,8 +241,8 @@ int process_command(int sockfd, User* user) {
  * @arg user the currently logged in user
  * @return -1 on failure, 0 on success
  */
-int transmit_leaderboard(int sockfd, User* user) {
-     char username[MAXDATASIZE] = "Test name";
+int transmit_leaderboard(int sockfd, User user) {
+     // char username = user.username;
      //send_char(sockfd, username);
      //strcpy(username, &user->username);
 
@@ -255,14 +255,14 @@ int transmit_leaderboard(int sockfd, User* user) {
           return CODE_ERROR;
      }
 
-     if (send_char(sockfd, username) != CODE_SUCCESS) {
+     if (send_char(sockfd, user.username) != CODE_SUCCESS) {
           printf("Error sending username of leaderboard entry\n");
           return CODE_ERROR;
      }
 
-     send_int(sockfd, 10);//user->seconds);
-     send_int(sockfd, 29);//user->numGames);
-     send_int(sockfd, 34);//user->gamesWon);
+     send_int(sockfd, user.seconds);//user->seconds);
+     send_int(sockfd, user.numGames);//user->numGames);
+     send_int(sockfd, user.gamesWon);//user->gamesWon);
 
      send_int(sockfd, END_TRANSMIT_LEADERBOARD_ENTRY);
 
@@ -286,12 +286,11 @@ int transmit_leaderboard(int sockfd, User* user) {
  * @arg sockfd the socket id to receive credentials via
  * @return -1 on failure, 0 on success
  */
-int authenticate(int sockfd, char usernames[][MAXSTRINGSIZE], char passwords[][MAXSTRINGSIZE], int sizeArray, User user) {
+int authenticate(int sockfd, char usernames[][MAXSTRINGSIZE], char passwords[][MAXSTRINGSIZE], int sizeArray, User* user) {
      char username[MAXDATASIZE];
      char password[MAXDATASIZE];
 
      send_int(sockfd, ACKNOWLEDGE_BEGIN_AUTHENTICATE);
-
 
      if (receive_int(sockfd) != BEGIN_TRANSMIT_STRING) {
           printf("Error receiving begin string transmit code\n");
@@ -320,6 +319,8 @@ int authenticate(int sockfd, char usernames[][MAXSTRINGSIZE], char passwords[][M
 	for (int i = 2; i <= sizeArray; i++){
 		if ((strcmp(username, usernames[i]) == 0) && (strcmp(password, passwords[i]) == 0)) {
 			send_int(sockfd, AUTHENTICATE_SUCCESS);
+			strcpy(user->username, usernames[i]);
+			strcpy(user->password, passwords[i]);
 			return CODE_SUCCESS;
 		}
 	}

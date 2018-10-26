@@ -40,8 +40,8 @@ typedef struct GameState {
 * Stores required variables of a user.
 */
 typedef struct User {
-  char username;
-  char password;
+  char username[MAXSTRINGSIZE];
+  char password[MAXSTRINGSIZE];
   GameState game; // Curent game.
   int seconds; // Total seconds of playtime.
   int numGames; // Total number of games played
@@ -212,6 +212,8 @@ int main(int argc, char *argv[]) {
 
      User user;
      user.seconds = 0;
+     user.numGames = 0;
+     user.gamesWon = 0;
      GameState game;
 
      while (!PROGRAM_END) {
@@ -225,7 +227,7 @@ int main(int argc, char *argv[]) {
 
           // If the client is not authenticated, attempt to authenticate them
           if (!AUTHENTICATED) {
-               if (authenticate(newfd, usernames, passwords, userCount, user) == CODE_ERROR) {
+               if (authenticate(newfd, usernames, passwords, userCount, &user) == CODE_ERROR) {
                     printf("[SERVER] User failed to authenticate\n");
                     continue;
                }
@@ -272,7 +274,7 @@ int main(int argc, char *argv[]) {
                     printf("[SERVER] Current game ended\n");
                     break;
                case BEGIN_TRANSMIT_LEADERBOARD:
-                    transmit_leaderboard(newfd, &user);
+                    transmit_leaderboard(newfd, user);
                     break;
                case BEGIN_COMMAND:
                     process_command(newfd, &user);
