@@ -89,7 +89,6 @@ void send_int(int sockfd, int value) {
      uint16_t statistics;
 
      statistics = htons(value);
-     printf("Sent: %d\n", value);
      send(sockfd, &statistics, sizeof(uint16_t), 0);
 }
 
@@ -112,8 +111,6 @@ int receive_int(int sockfd) {
      }
 
      results = ntohs(statistics);
-
-     printf("Received: %d\n", results);
 
      return results;
 }

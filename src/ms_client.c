@@ -98,7 +98,7 @@ int gameProcess() {
                     break;
 
                case QUIT_GAME:
-                    quit = true; // $$$ add returning to program process
+                    quit = true;
                     break;
                default:
                     printf("An issue has occured processing your request. Please try again.\n");

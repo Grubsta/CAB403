@@ -186,11 +186,19 @@ Grid checkNeighbours(int X, int Y, GameState *game) {
 * Main.
 */
 int main(int argc, char *argv[]) {
-	/* Get port number for server to listen on */
-	if (argc != 2) {
-		fprintf(stderr,"usage: client port_number\n");
-		exit(1);
-	}
+     char * default_port = "12345";
+     int sockfd;
+
+    /* Get port number for server to listen on */
+    if (argc < 2 ) {
+          printf("[SERVER] Listen server started on default port %s.\n", default_port);
+          sockfd = start_listen_server(default_port);
+    }
+     else {
+          printf("[SERVER] Listen server started on port %s.\n", argv[1]);
+          sockfd = start_listen_server(argv[1]);
+
+     }
 
      // Generate 2 arrays of usernames and passwords
      int userCount = countUsers();
@@ -198,8 +206,6 @@ int main(int argc, char *argv[]) {
      char passwords[userCount][MAXSTRINGSIZE];
      int output = GenerateUsers(usernames, passwords);
 
-     int sockfd = start_listen_server(argv[1]);
-     printf("[SERVER] Listen server started on port %s.\n", argv[1]);
 
      int newfd = connect_to_client(sockfd);
      printf("[SERVER] Established connection to client.\n");

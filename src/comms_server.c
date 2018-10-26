@@ -169,15 +169,15 @@ int process_command(int sockfd, User* user) {
                          user->game.flags_left--;
                          user->game.tiles[y][x].is_flag = true;
                          send_int(sockfd, COMMAND_PLACE_FLAG_SUCCESS);
-                         printf("Flag placed. Mines remaining: %d. Flags remaining: %d\n", user->game.mines_left, user->game.flags_left);
+                         printf("[SERVER] Flag placed. Mines remaining: %d. Flags remaining: %d\n", user->game.mines_left, user->game.flags_left);
                     }
                     else {
-                         printf("Flag not placed.\n");
+                         printf("[SERVER] Flag not placed.\n");
                          send_int(sockfd, COMMAND_PLACE_FLAG_FAIL);
                     }
                }
                else {
-                    printf("Flag not placed.\n");
+                    printf("[SERVER] Flag not placed.\n");
                     send_int(sockfd, COMMAND_PLACE_FLAG_FAIL);
                }
 
