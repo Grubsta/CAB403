@@ -32,6 +32,8 @@
 #define ACKNOWLEDGE_END_COMMAND 303
 #define COMMAND_PLACE_FLAG 310
 #define COMMAND_REVEAL_TILE 311
+#define COMMAND_PLACE_FLAG_FAIL 312
+#define COMMAND_PLACE_FLAG_SUCCESS 313
 
 // Authentication
 #define BEGIN_AUTHENTICATE 400
@@ -82,6 +84,7 @@ void send_int(int sockfd, int value) {
      uint16_t statistics;
 
      statistics = htons(value);
+     printf("Sending: %d\n", value);
      send(sockfd, &statistics, sizeof(uint16_t), 0);
 }
 

@@ -9,6 +9,7 @@
 #define SEED 42
 #define NUM_TILES_X 9
 #define NUM_TILES_Y 9
+#define FLAGS 10
 #define MINES 10
 #define PLAY_MINESWEEPER 1
 #define SHOW_LEADERBOARD 2

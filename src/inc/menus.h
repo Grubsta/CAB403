@@ -5,8 +5,6 @@
 #include <string.h>
 #include <stdio.h>
 
-int active_mines;
-
 void loginSuccessful(){
 	printf("\nLogin Successful!\n");
 }
@@ -121,7 +119,7 @@ int drawOptionsPane(){
 
 
 void drawGame(){
-	printf("\n\n\nMines Remaining: %d\n", active_mines);
+	printf("\n\n\nMines Remaining: %d\n", flags_remaining);
 	printf("\n    1 2 3 4 5 6 7 8 9 \n");
 	printf("----------------------\n");
 	for (int y = 0; y < NUM_TILES_Y; y++) {
