@@ -260,6 +260,12 @@ int authenticate(char * username, char * password) {
      return CODE_ERROR;
 }
 
+/*
+ * @brief receives leaderboard data to be put into drawLeaderBoard (in menus.h)
+ * @arg username the char to store the username variable into
+ * @arg results the int array to store time, games played, and games won
+ * @return -1 on failure, 0 on success
+ */
 int generateLeaderboard(char * username, int results[3]) {
      send_int(sockfd, BEGIN_TRANSMIT_LEADERBOARD);
 
@@ -309,43 +315,5 @@ int generateLeaderboard(char * username, int results[3]) {
 
      return CODE_SUCCESS;
 }
-
-
-/*
-int main(int argc, char*argv[]) {
-	if (argc != 3) {
-		fprintf(stderr,"usage: client_hostname port_number\n");
-		exit(1);
-	}
-
-     int sockfd = connect_to_server(argv[1], argv[2]);
-     printf("[CLIENT] Connection established with server.\n");
-
-
-     char username[MAXDATASIZE] = "jack";
-     char password[MAXDATASIZE] = "password";
-
-     int success = authenticate(sockfd, username, password);
-
-     if (success == CODE_SUCCESS) {
-          printf("Successfully authenticated with server\n");
-     }
-     else if (success == CODE_ERROR) {
-          printf("Failed to authenticate with server\n");
-     }
-     else {
-          printf("SOmething has gone terribly wrong\n");
-     }
-
-     //char test[MAXDATASIZE] = "This is a test string";
-     //printf("Sending: %s\n", test);
-     //send_char(sockfd, test);
-
-     send_int(sockfd, 999);
-
-     close(sockfd);
-     return CODE_SUCCESS;
-}
-*/
 
 #endif
