@@ -98,16 +98,19 @@ int gameProcess() {
                     quit = true; // $$$ add returning to program process
                     break;
                default:
-                    printf("An issue has occured processing your request. Please try again.");
+                    printf("An issue has occured processing your request. Please try again.\n");
                     break;
           }
      }
 
      send_int(sockfd, END_GAME);
      if (receive_int(sockfd) != ACKNOWLEDGE_END_GAME) {
-          printf("Error receiving end game acknowledgement from server");
+          printf("Error receiving end game acknowledgement from server\n");
           return CODE_ERROR;
      }
+
+     reveal_grid();
+     drawGame();
 
      return CODE_SUCCESS;
 }

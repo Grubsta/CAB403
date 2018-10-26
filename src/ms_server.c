@@ -303,6 +303,7 @@ int main(int argc, char *argv[]) {
                     break;
                case END_GAME:
                     send_int(newfd, ACKNOWLEDGE_END_GAME);
+                    reveal_grid(newfd, &user);
                     GAME_STARTED = false;
                     printf("[SERVER] Current game ended\n");
                     break;

@@ -56,6 +56,53 @@ void disconnect_from_server() {
 }
 
 /*
+ * @brief method to retrieve the entire grid. relies on reveal_grid function in comms_server
+ * @return -1 on fail, 0 on success
+ */
+int reveal_grid() {
+     if (receive_int(sockfd) != BEGIN_GRID_REVEAL) {
+          printf("Error receiving grid reveal notice from server");
+          return CODE_ERROR;
+     }
+     send_int(sockfd, ACKNOWLEDGE_BEGIN_GRID_REVEAL);
+
+     int instruction, y, x, value;
+     char tile[0];
+
+     while (1) {
+          y = receive_int(sockfd);
+          if (y == END_GRID_REVEAL) {
+               break;
+          }
+          send_int(sockfd, y);
+
+          x = receive_int(sockfd);
+          if (x == END_GRID_REVEAL) {
+               break;
+          }
+          send_int(sockfd, x);
+
+          value = receive_int(sockfd);
+          if (value == END_GRID_REVEAL) {
+               break;
+          }
+          send_int(sockfd, value);
+
+          if (value > 8) {
+               tile[0] = '*';
+          }
+          else {
+               tile[0] = value + '0';
+          }
+
+          grid[y][x] = *tile;
+     }
+
+     send_int(sockfd, ACKNOWLEDGE_END_GRID_REVEAL);
+     return CODE_SUCCESS;
+}
+
+/*
  * @brief command to send coordinate selection to server for processing
  * @arg coordinates the coordinates string (2 characters) to send to the server
  * return -1 on fail, 0 on success
@@ -137,9 +184,7 @@ int cmd_place_flag(int y, int x) {
      int flagstate = receive_int(sockfd);
      switch (flagstate) {
           case COMMAND_PLACE_FLAG_SUCCESS:
-               printf("FLAG STATE IS APPARENTLY %d\n", flagstate);
                grid[y][x] = '+';
-               printf("WHAT THE FUCK WHY");
                flags_remaining--;
                break;
           case COMMAND_PLACE_FLAG_FAIL:
@@ -170,10 +215,9 @@ int cmd_place_flag(int y, int x) {
                break;
      }
 
-     return CODE_SUCCESS;
 
      if (receive_int(sockfd) != END_COMMAND) {
-          printf("Error receiving end command notice from sevrer\n");
+          printf("Error receiving end command notice from server\n");
           return CODE_ERROR;
      }
 

@@ -61,6 +61,12 @@
 #define END_TRANSMIT_LEADERBOARD 607
 #define ACKNOWLEDGE_END_TRANSMIT_LEADERBOARD 608
 
+// Grid reveal
+#define BEGIN_GRID_REVEAL 700
+#define ACKNOWLEDGE_BEGIN_GRID_REVEAL 701
+#define END_GRID_REVEAL 702
+#define ACKNOWLEDGE_END_GRID_REVEAL 703
+
 // Game state
 #define BEGIN_GAME 800
 #define ACKNOWLEDGE_BEGIN_GAME 801
@@ -74,7 +80,6 @@
 // Connection
 #define END_CONNECTION 999
 
-
 /*
  * @brief send an int via the socket
  * @arg sockfd the socket to communicate over
@@ -84,7 +89,6 @@ void send_int(int sockfd, int value) {
      uint16_t statistics;
 
      statistics = htons(value);
-     printf("Sending: %d\n", value);
      send(sockfd, &statistics, sizeof(uint16_t), 0);
 }
 

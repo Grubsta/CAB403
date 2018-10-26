@@ -84,6 +84,53 @@ int get_tile_value(User *user, int y, int x) {
      return count;
 }
 
+int reveal_grid(int sockfd, User* user) {
+     int value;
+
+     send_int(sockfd, BEGIN_GRID_REVEAL);
+
+     if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_GRID_REVEAL) {
+          printf("Error receiving acknowledgement of grid reveal\n");
+     }
+
+     for (int y = 0; y < NUM_TILES_Y; y++) {
+          for (int x = 0; x < NUM_TILES_X; x++) {
+               // Send Y coordinate
+               send_int(sockfd, y);
+               if (receive_int(sockfd) != y) {
+                    printf("Error receiving confirmation of reception from client (Y coordinate %d)\n", y);
+                    return CODE_ERROR;
+               }
+
+               // Send X coordinate
+               send_int(sockfd, x);
+               if (receive_int(sockfd) != x) {
+                    printf("Error receiving confirmation of reception from client (X coordinate %d)\n", x);
+                    return CODE_ERROR;
+               }
+
+               // Send value at Y and X coordinate
+               value = user->game.tiles[y][x].adjacent_mines;
+
+               send_int(sockfd, value);
+
+               if (receive_int(sockfd) != value) {
+                    printf("Error receiving confirmation of reception from client (Value %d)\n", value);
+                    return CODE_ERROR;
+               }
+          }
+     }
+
+     send_int(sockfd, END_GRID_REVEAL);
+
+     if (receive_int(sockfd) != ACKNOWLEDGE_END_GRID_REVEAL) {
+          printf("Error receiving closing acknowledgement of grid reveal from client\n");
+          return CODE_ERROR;
+     }
+
+     return CODE_SUCCESS;
+}
+
 /*
  * @brief process command protocol functions sent from the client
  * @arg sockfd the socket to communicate over
@@ -143,7 +190,7 @@ int process_command(int sockfd, User* user) {
 				}
 				user->numGames++;
                     send_int(sockfd, GAME_OVER);
-				// send entire grid
+                    reveal_grid(sockfd, user);
 				// go back to menu state
 			}
 
@@ -173,8 +220,11 @@ int process_command(int sockfd, User* user) {
                }
                else {
                     send_int(sockfd, END_COMMAND);
+                    if (receive_int(sockfd) != ACKNOWLEDGE_END_COMMAND) {
+                         printf("Error receiving acknowledgement of command end from client\n");
+                         return CODE_ERROR;
+                    }
                }
-
                break;
 
           default:
