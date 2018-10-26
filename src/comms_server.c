@@ -242,9 +242,10 @@ int process_command(int sockfd, User* user) {
  * @return -1 on failure, 0 on success
  */
 int transmit_leaderboard(int sockfd, User* user) {
-     char * username = user->username;
+     char username[MAXDATASIZE] = "Test name";
+     //send_char(sockfd, username);
+     //strcpy(username, &user->username);
 
-     // Send a response to the client
      send_int(sockfd, ACKNOWLEDGE_BEGIN_TRANSMIT_LEADERBOARD);
 
      send_int(sockfd, BEGIN_TRANSMIT_LEADERBOARD_ENTRY);
@@ -254,10 +255,14 @@ int transmit_leaderboard(int sockfd, User* user) {
           return CODE_ERROR;
      }
 
-     send_char(sockfd, user->username);
-     send_int(sockfd, user->seconds);
-     send_int(sockfd, user->numGames);
-     send_int(sockfd, user->gamesWon);
+     if (send_char(sockfd, username) != CODE_SUCCESS) {
+          printf("Error sending username of leaderboard entry\n");
+          return CODE_ERROR;
+     }
+
+     send_int(sockfd, 10);//user->seconds);
+     send_int(sockfd, 29);//user->numGames);
+     send_int(sockfd, 34);//user->gamesWon);
 
      send_int(sockfd, END_TRANSMIT_LEADERBOARD_ENTRY);
 

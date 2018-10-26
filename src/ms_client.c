@@ -125,6 +125,8 @@ void programProcess() {
      int gamesPlayed[MAXENTRIES];
      int gamesWon[MAXENTRIES];
      int output;
+     char username[MAXDATASIZE];
+     int results[3];
      while (quit == false) {
           int option1;
           option1 = drawMenu();
@@ -134,12 +136,11 @@ void programProcess() {
                     gameProcess();
                     break;
                case SHOW_LEADERBOARD:
-                    output = generateLeaderboard(usernames, seconds, gamesPlayed, gamesWon);
-                    if (output == CODE_SUCCESS) {
-                         drawLeaderBoard(usernames, seconds, gamesPlayed, gamesWon);
+                    if (generateLeaderboard(username, results) != CODE_SUCCESS) {
+                         printf("\nThere was an error processing your request. Please try again later.\n");
                     }
                     else {
-                         printf("\nThere was an error processing your request. Please try again later.\n");
+                         drawLeaderBoard(username, results);
                     }
                     break;
                case EXIT:

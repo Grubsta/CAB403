@@ -272,7 +272,7 @@ int main(int argc, char *argv[]) {
                     printf("[SERVER] Current game ended\n");
                     break;
                case BEGIN_TRANSMIT_LEADERBOARD:
-                    //transmit_leaderboard(newfd);
+                    transmit_leaderboard(newfd, &user);
                     break;
                case BEGIN_COMMAND:
                     process_command(newfd, &user);

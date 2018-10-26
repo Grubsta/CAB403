@@ -140,14 +140,10 @@ void drawGameWon() {
 }
 
 // Draws leaderboards dependent on amount of users. No users will result in an empty table
-void drawLeaderBoard(char usernames[][MAXSTRINGSIZE], int seconds[], int gamesWon[], int gamesPlayed[]){
+void drawLeaderBoard(char * username, int results[3]){
 	// Empty Leaderboard scenario
 	printf("\n========================================================================\n");
-	printf("USER\t\tSECONDS\t\tGAMES PLAYED\t\tGAMES WON");
-  	for (int i = 0; i < MAXENTRIES; i++) {
-		if (usernames[i] == "") return;
-		printf("%s\t\t%d\t\t%d\t\t%d\n", usernames[i], seconds[i], gamesPlayed[i], gamesWon[i]);
-	}
+	printf("%s\t\t%d seconds\t\t%d games won, %d games played\n", username, results[0], results[1], results[2]);
   // printf("%s\t\t%d\t\t%d\t\t%d\n", user[i])
 	printf("\n========================================================================\n\n");
 

@@ -260,7 +260,7 @@ int authenticate(char * username, char * password) {
      return CODE_ERROR;
 }
 
-int generateLeaderboard() {
+int generateLeaderboard(char * username, int results[3]) {
      send_int(sockfd, BEGIN_TRANSMIT_LEADERBOARD);
 
 	if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_TRANSMIT_LEADERBOARD) {
@@ -273,8 +273,18 @@ int generateLeaderboard() {
           return CODE_ERROR;
      }
 
-     char username[MAXDATASIZE];
-     receive_char(sockfd, username);
+     send_int(sockfd, ACKNOWLEDGE_BEGIN_LEADERBOARD_ENTRY);
+
+     if (receive_int(sockfd) != BEGIN_TRANSMIT_STRING) {
+          printf("Error receiving beginning of string transmission for leaderboard username\n");
+          return CODE_ERROR;
+     }
+
+     if (receive_char(sockfd, username) != CODE_SUCCESS) {
+          printf("Error receiving username of leaderboard entry\n");
+          return CODE_ERROR;
+     }
+
      int seconds = receive_int(sockfd);
      int numGames = receive_int(sockfd);
      int gamesWon = receive_int(sockfd);
@@ -292,6 +302,10 @@ int generateLeaderboard() {
      }
 
      send_int(sockfd, ACKNOWLEDGE_END_TRANSMIT_LEADERBOARD);
+
+     results[0] = seconds;
+     results[1] = numGames;
+     results[2] = gamesWon;
 
      return CODE_SUCCESS;
 }
