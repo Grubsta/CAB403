@@ -47,7 +47,10 @@ void reset_grid() {
 
 }
 
-
+/*
+ * @brief the looping process to run through the game on client side (gameloop)
+ * @return -1 on failure, 0 on success
+ */ 
 int gameProcess() {
      int option1;
      bool quit = false;
@@ -116,8 +119,8 @@ int gameProcess() {
 }
 
 /*
-* Program processes.
-*/
+ * @brief the program process including background functionality and menu selections
+ */
 void programProcess() {
      bool quit = false;
      char usernames[MAXENTRIES][MAXSTRINGSIZE];
