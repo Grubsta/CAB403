@@ -149,6 +149,8 @@ void programProcess() {
                     }
                     break;
                case EXIT:
+                    disconnect_from_server();
+                    quit = true;
                     break;
                default:
                     printf("An issue has occured processing your request. Please try again.");
