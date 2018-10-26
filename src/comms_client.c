@@ -117,7 +117,6 @@ int cmd_place_flag(int sockfd, char coordinates[2]) {
      int i;
 
      for (i = 0; i < NUM_TILES_Y; i++) {
-          printf("y: %i\n", i);
           if (coordinates[0] == y_Axis[i]) {
                y = i;
                break;
@@ -125,7 +124,6 @@ int cmd_place_flag(int sockfd, char coordinates[2]) {
      }
 
      for (i = 0; i < NUM_TILES_X; i++) {
-          printf("x: %i\n", i);
           if (coordinates[1] == x_Axis[i]) {
                x = i;
                break;

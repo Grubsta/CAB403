@@ -51,8 +51,10 @@ int connect_to_client(int sockfd) {
 	socklen_t sin_size;
      bool done = false;
      while(1) {
+          sin_size = sizeof(struct sockaddr_in);
           // Repeatedly loop until a connection is accepted
-          if ((newfd = accept(sockfd, (struct sockaddr *)&client_addr, &sin_size)) == CODE_ERROR) {
+          newfd = accept(sockfd, (struct sockaddr *)&client_addr, &sin_size);
+          if (newfd < 0) {
                continue;
           }
 
