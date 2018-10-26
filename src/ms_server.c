@@ -236,8 +236,6 @@ void shutDown() {
 }
 
 void initUser(User user, GameState game) {
-     game = createGame();
-     user.game = game;
      user.score = 0;
      user.seconds = 0;
      user.numGames = 0;
@@ -273,8 +271,10 @@ int main(int argc, char *argv[]) {
 
      User user;
      GameState game = createGame();
+     user.game = game;
+
      // initUser(user, game);
-     printf("\nheooe: %d	Y: %d 	X: %d", game.tiles[3][3].adjacent_mines, 3, 3);
+     printf("\nheooe: %d	Y: %d 	X: %d", user.game.tiles[3][3].adjacent_mines, 3, 3);
      while (!GAME_END) {
           // Recieve the latest instruction
           instruction = receive_int(newfd);
@@ -300,8 +300,8 @@ int main(int argc, char *argv[]) {
                     GAME_END = true;
                     break;
                case BEGIN_COMMAND:
-                    printf("\nTeyyyo: %d	Y: %d 	X: %d", game.tiles[3][3].adjacent_mines, 3, 3);
-                    process_command(newfd, game);
+                    printf("\nTeyyyo: %d	Y: %d 	X: %d",  user.game.tiles[3][3].adjacent_mines, 3, 3);
+                    process_command(newfd, user);
                     break;
                default:
                     break;

@@ -73,9 +73,11 @@ int connect_to_client(int sockfd) {
  * @arg x the x coordinate to check
  * @return -1 on fail, 0 on success
  */
-int process_command_reveal_tile(int sockfd, GameState game, int y, int x) {
-     int count = game.tiles[y][x].adjacent_mines;
-     printf("Tile: %d\n", count);
+int process_command_reveal_tile(int sockfd, User user, int y, int x) {
+     int count = user.game.tiles[y][x].adjacent_mines;
+     if (count = 9) {
+
+	}
 
      send_int(sockfd, count);
 }
@@ -85,7 +87,7 @@ int process_command_reveal_tile(int sockfd, GameState game, int y, int x) {
  * @arg sockfd the socket to communicate over
  * return -1 on fail, 0 on success
  */
-int process_command(int sockfd, GameState game) {
+int process_command(int sockfd, User user) {
      int command_type;
      int y, x;
      send_int(sockfd, ACKNOWLEDGE_BEGIN_COMMAND);
@@ -127,8 +129,8 @@ int process_command(int sockfd, GameState game) {
                     printf("Error receiving X coordinate (out of acceptable bounds)\n");
                     return CODE_ERROR;
                }
-			printf("Tile: %d	Y: %d 	X: %d", game.tiles[y][x].adjacent_mines, y, x);
-               if (process_command_reveal_tile(sockfd, game, y, x) != CODE_SUCCESS) {
+			printf("Tile: %d	Y: %d 	X: %d", user.game.tiles[y][x].adjacent_mines, y, x);
+               if (process_command_reveal_tile(sockfd, user, y, x) != CODE_SUCCESS) {
                     printf("Error revealing tile");
                     return CODE_ERROR;
                }
