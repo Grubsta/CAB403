@@ -57,25 +57,7 @@ void disconnect_from_server() {
  * @arg coordinates the coordinates string (2 characters) to send to the server
  * return -1 on fail, 0 on success
  */
-int cmd_reveal_tile(char coordinates[2]) {
-     int y = -1;
-     int x = -1;
-     int i;
-
-     for (i = 0; i < NUM_TILES_Y; i++) {
-          if (coordinates[0] == y_Axis[i]) {
-               y = i;
-               break;
-          }
-     }
-
-     for (i = 0; i < NUM_TILES_X; i++) {
-          if (coordinates[1] == x_Axis[i]) {
-               x = i;
-               break;
-          }
-     }
-
+int cmd_reveal_tile(int y, int x) {
      send_int(sockfd, BEGIN_COMMAND);
 
      if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_COMMAND) {
@@ -116,25 +98,7 @@ int cmd_reveal_tile(char coordinates[2]) {
  * @arg coordinates the coordinates string (2 characters) to send to the server
  * return -1 on fail, 0 on success
  */
-int cmd_place_flag(char coordinates[2]) {
-     int y = -1;
-     int x = -1;
-     int i;
-
-     for (i = 0; i < NUM_TILES_Y; i++) {
-          if (coordinates[0] == y_Axis[i]) {
-               y = i;
-               break;
-          }
-     }
-
-     for (i = 0; i < NUM_TILES_X; i++) {
-          if (coordinates[1] == x_Axis[i]) {
-               x = i;
-               break;
-          }
-     }
-
+int cmd_place_flag(int y, int x) {
      send_int(sockfd, BEGIN_COMMAND);
 
      if (receive_int(sockfd) != ACKNOWLEDGE_BEGIN_COMMAND) {

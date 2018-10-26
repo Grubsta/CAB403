@@ -25,6 +25,52 @@ void requestPassword(char * destination){
     scanf("%s", destination);
 }
 
+void requestCoordinates(int destination[2]) {
+     int y;
+     int x;
+     int i;
+     char coordinates[512];
+
+     while (1) {
+          y = -1;
+          x = -1;
+
+          printf("\nCoordinates (e.g. C5): ");
+          scanf("%s", coordinates);
+
+          if (coordinates[0] == '\0' || coordinates[1] == '\0' || coordinates[2] != '\0') {
+               printf("Please enter 2 characters.\n");
+               continue;
+          }
+     
+          for (i = 0; i < NUM_TILES_Y; i++) {
+               if (coordinates[0] == y_Axis[i]) {
+                    y = i;
+                    printf("y: %d\n", y);
+                    break;
+               }
+          }
+     
+          for (i = 0; i < NUM_TILES_X; i++) {
+               if (coordinates[1] == x_Axis[i]) {
+                    x = i;
+                    printf("x: %d\n", x);
+                    break;
+               }
+          }
+
+          if (x == -1 || y == -1) {
+               printf("Invalid input. Please try again.\n");
+               continue;
+          }
+          break;
+     }
+
+     destination[0] = y;
+     destination[1] = x;
+}
+
+
 void drawWelcomePane(){
 	printf("======================================================== \n");
 	printf("Welcome to the online version of Minesweeper \n");
@@ -48,7 +94,6 @@ int drawMenu(){
 
     printf("Selection (1-3): ");
     scanf("%c", &option);
-		printf("%c\n", option);
     if (option == '1' || option == '2' || option == '3') {
 			int intOption = option - '0';
       return intOption;

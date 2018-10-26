@@ -58,9 +58,9 @@ void reset_grid() {
 
 
 void gameProcess() {
-     char coordinates[2] = "";
      int option1;
      bool quit = false;
+     int coordinates[2];
 
      reset_grid();
 
@@ -70,17 +70,16 @@ void gameProcess() {
 
           switch (option1) {
                case REVEAL_TILE:
-                    printf("\nCoordinates: ");
-                    scanf("%s", coordinates);
-                    cmd_reveal_tile(coordinates);
+                    requestCoordinates(coordinates);
+                    printf("Coordinate y: %d\nCoordinate x: %d\n", coordinates[0], coordinates[1]);
+                    cmd_reveal_tile(coordinates[0], coordinates[1]);
                     break;
                case PLACE_FLAG:
-                    printf("\nCoordinates: ");
-                    scanf("%s", coordinates);
-                    cmd_place_flag(coordinates);
+                    requestCoordinates(coordinates);
+                    cmd_place_flag(coordinates[0], coordinates[1]);
                     break;
                case QUIT_GAME:
-                    quit == true; // $$$ add returning to program process
+                    quit = true; // $$$ add returning to program process
                     break;
                default:
                     printf("An issue has occured processing your request. Please try again.");
