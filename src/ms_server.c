@@ -235,6 +235,15 @@ void shutDown() {
 
 }
 
+void initUser(User user, GameState game) {
+     game = createGame();
+     user.game = game;
+     user.score = 0;
+     user.seconds = 0;
+     user.numGames = 0;
+     user.gamesWon = 0;
+}
+
 /*
 * Main.
 */
@@ -253,7 +262,7 @@ int main(int argc, char *argv[]) {
 
      int sockfd = start_listen_server(argv[1]);
      printf("[SERVER] Listen server started on port %s.\n", argv[1]);
-     
+
      int newfd = connect_to_client(sockfd);
      printf("[SERVER] Established connection to client.\n");
 
@@ -263,6 +272,8 @@ int main(int argc, char *argv[]) {
      int instruction, instruction_old;
 
      User user;
+     GameState game;
+     initUser(user, game);
 
      while (!GAME_END) {
           // Recieve the latest instruction
