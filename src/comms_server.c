@@ -270,7 +270,7 @@ int transmit_leaderboard(int sockfd, User* user) {
 
      if (receive_int(sockfd) != ACKNOWLEDGE_END_TRANSMIT_LEADERBOARD) {
           printf("Error receiving acknowledgement of end of leaderboard\n");
-          return CODE_ERROR
+          return CODE_ERROR;
      }
 
      return CODE_SUCCESS;
