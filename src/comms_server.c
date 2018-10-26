@@ -120,14 +120,15 @@ int process_command(int sockfd, User user) {
 			if (user.game.flags_left <= 0) {
 				if (user.game.mines_left <= 0) {
 					user.gamesWon++;
-					// send you won command
+                         send_int(sockfd, GAME_WON);
 
 				}
 				user.numGames++;
-				// send you lost command
+                    send_int(sockfd, GAME_OVER);
 				// send entire grid
 				// go back to menu state
 			}
+
                send_int(sockfd, END_COMMAND);
                break;
 
@@ -149,6 +150,7 @@ int process_command(int sockfd, User user) {
 
                if (tile == 9) {
                     send_int(sockfd, GAME_OVER);
+                    user.numGames++;
                }
                else {
                     send_int(sockfd, END_COMMAND);

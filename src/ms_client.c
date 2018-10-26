@@ -37,14 +37,6 @@ void sigint_handler(int sig_num)
 }
 
 /*
-* Flags the location provided by the parameters.
-*/
-void flag(int x, int y) {
-     grid[y][x] = '+';
-
-}
-
-/*
  * @brief fill the grid with empty characters
  */
 void reset_grid() {

@@ -287,6 +287,7 @@ int main(int argc, char *argv[]) {
                          game = createGame();
                          user.game = game;
                          GAME_STARTED = true;
+                         user.numGames++;
                          printf("[SERVER] New game started by client\n");
                          break;
                     default:
@@ -304,6 +305,9 @@ int main(int argc, char *argv[]) {
                     send_int(newfd, ACKNOWLEDGE_END_GAME);
                     GAME_STARTED = false;
                     printf("[SERVER] Current game ended\n");
+                    break;
+               case BEGIN_TRANSMIT_LEADERBOARD:
+                    //transmit_leaderboard(newfd);
                     break;
                case BEGIN_COMMAND:
                     process_command(newfd, user);

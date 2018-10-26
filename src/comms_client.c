@@ -131,6 +131,30 @@ int cmd_place_flag(int y, int x) {
 
      send_int(sockfd, x);
 
+     grid[y][x] = '+';
+
+     //Check if game is over, won, or continuing
+     int status = receive_int(sockfd);
+     switch (status) {
+          case GAME_OVER:
+               send_int(sockfd, ACKNOWLEDGE_GAME_OVER);
+               return GAME_OVER;
+               break;
+          case GAME_WON:
+               send_int(sockfd, ACKNOWLEDGE_GAME_WON);
+               return GAME_WON;
+               break;
+          case END_COMMAND:
+               send_int(sockfd, ACKNOWLEDGE_END_COMMAND);
+               break;
+          default:
+               printf("Error receiving end command notice from server\n");
+               return CODE_ERROR;
+               break;
+     }
+
+     return CODE_SUCCESS;
+
      if (receive_int(sockfd) != END_COMMAND) {
           printf("Error receiving end command notice from sevrer\n");
           return CODE_ERROR;
