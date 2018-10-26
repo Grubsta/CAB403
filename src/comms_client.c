@@ -184,6 +184,7 @@ int cmd_place_flag(int y, int x) {
      int flagstate = receive_int(sockfd);
      switch (flagstate) {
           case COMMAND_PLACE_FLAG_SUCCESS:
+               printf("Made it here\n");
                grid[y][x] = '+';
                flags_remaining--;
                break;
@@ -215,13 +216,6 @@ int cmd_place_flag(int y, int x) {
                break;
      }
 
-
-     if (receive_int(sockfd) != END_COMMAND) {
-          printf("Error receiving end command notice from server\n");
-          return CODE_ERROR;
-     }
-
-     send_int(sockfd, ACKNOWLEDGE_END_COMMAND);
 
      return CODE_SUCCESS;
 }

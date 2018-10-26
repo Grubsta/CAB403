@@ -140,7 +140,6 @@ int process_command(int sockfd, User* user) {
      int command_type;
      int y, x;
      send_int(sockfd, ACKNOWLEDGE_BEGIN_COMMAND);
-	printf("PROCESS CMD - MINES: %d     FLAGS: %d\n", user->game.mines_left, user->game.flags_left);
 
      command_type = receive_int(sockfd);
 
@@ -195,7 +194,10 @@ int process_command(int sockfd, User* user) {
 			}
 
                send_int(sockfd, END_COMMAND);
-			printf("PROCESS CMD END - MINES: %d     FLAGS: %d\n", user->game.mines_left, user->game.flags_left);
+               if (receive_int(sockfd) != ACKNOWLEDGE_END_COMMAND) {
+                         printf("Error receiving acknowledgement of command end from client\n");
+                         return CODE_ERROR;
+               }
                break;
 
           case COMMAND_REVEAL_TILE:
@@ -230,7 +232,6 @@ int process_command(int sockfd, User* user) {
           default:
                break;
      }
-	printf("PROCESS END - MINES: %d     FLAGS: %d\n", user->game.mines_left, user->game.flags_left);
      return CODE_SUCCESS;
 }
 
