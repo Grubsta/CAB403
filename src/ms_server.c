@@ -292,7 +292,7 @@ int main(int argc, char *argv[]) {
                     process_command(newfd);
                     break;
                default:
-                    process_command(newfd);
+                    break;
           }
      }
 
